@@ -1,0 +1,23 @@
+<!-- lineup: 팀별 드라이버 라인업 (2열 그리드)
+     {{CSS}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{TEAMS_HTML}} {{NOTE}} {{DATE}}
+     팀 블록: <div class="lu-team t-mclaren"><div class="lu-bar"></div><div><div class="lu-name">McLaren</div><div class="lu-drivers">L. Norris · O. Piastri</div></div></div> -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.lu { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 40px; align-content: center; }
+.lu-team { display: flex; align-items: center; gap: 18px; background: rgba(255,255,255,0.055); border-radius: 14px; padding: 20px 22px; }
+.lu-bar { width: 9px; height: 58px; border-radius: 4px; background: var(--team, #666); flex-shrink: 0; }
+.lu-name { font-size: 27px; font-weight: 800; }
+.lu-drivers { font-size: 23px; color: #c9c9d4; margin-top: 4px; }
+</style>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="lu">{{TEAMS_HTML}}</div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

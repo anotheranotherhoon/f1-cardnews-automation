@@ -1,0 +1,43 @@
+<!-- result-full: 전체 순위 (2열 × 최대 11행) — 22대 그리드를 한 장에 담는다
+     {{CSS}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{LEFT_ROWS_HTML}} {{RIGHT_ROWS_HTML}} {{NOTE}} {{DATE}}
+     행: <div class="rf-row p1 t-mclaren"><div class="rf-pos">1</div><div class="rf-bar"></div>
+         <div class="rf-name">L. Norris</div><div class="rf-metric">1:39:56</div></div> -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.rf { flex: 1; display: flex; gap: 20px; margin-top: 38px; }
+.rfcol { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 9px; }
+.rf-row { display: flex; align-items: center; gap: 13px; background: rgba(255,255,255,0.055);
+          border-radius: 12px; padding: 9px 16px; }
+.rf-row.p1 { background: rgba(225,6,0,0.22); outline: 2px solid rgba(225,6,0,0.55); }
+.rf-row.out { opacity: 0.55; }
+.rf-pos { width: 44px; font-size: 27px; font-weight: 900; font-style: italic; text-align: center; }
+.rf-bar { width: 7px; height: 34px; border-radius: 4px; background: var(--team, #666); flex: none; }
+.rf-name { flex: 1; min-width: 0; font-size: 25px; font-weight: 700;
+           white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rf-metric { font-size: 23px; font-weight: 700; color: #c9c9d4; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rf-metric small { font-size: 19px; color: #8a8a98; margin-left: 4px; }
+/* 단일 열 모드: 항목이 11개 이하면 한 줄씩 세로로 — 컨스트럭터 순위처럼 팀명이 길 때 쓴다 */
+.rf.single { display: block; }
+.rf.single .rfcol.right { display: none; }
+.rf.single .rfcol { gap: 12px; }
+.rf.single .rf-row { padding: 12px 22px; gap: 18px; }
+.rf.single .rf-pos { width: 56px; font-size: 33px; }
+.rf.single .rf-bar { width: 9px; height: 42px; }
+.rf.single .rf-name { font-size: 31px; }
+.rf.single .rf-metric { font-size: 28px; }
+</style>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="rf {{RF_CLASS}}">
+    <div class="rfcol">{{LEFT_ROWS_HTML}}</div>
+    <div class="rfcol">{{RIGHT_ROWS_HTML}}</div>
+  </div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

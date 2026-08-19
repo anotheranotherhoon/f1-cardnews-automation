@@ -1,0 +1,23 @@
+<!-- cover-meme: 목/월 밈 표지 — Gemini 생성 이미지 풀블리드 + 하단 타이틀 스트립
+     {{CSS}} {{BG_URL}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{DATE}} -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.meme-bg { position: absolute; inset: 0; background-size: cover; background-position: center top; }
+.meme-grad { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,20,0) 45%, rgba(11,11,20,0.9) 82%); }
+.meme-frame { position: relative; z-index: 2; height: 100%; padding: 64px; display: flex; flex-direction: column; justify-content: flex-end; }
+.meme-title { font-size: 78px; font-weight: 900; line-height: 1.12; word-break: keep-all; text-shadow: 0 4px 24px rgba(0,0,0,0.6); }
+.meme-sub { font-size: 40px; font-weight: 600; color: #e0e0e8; margin-top: 18px; word-break: keep-all; text-shadow: 0 2px 16px rgba(0,0,0,0.6); }
+.meme-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 42px; }
+</style>
+<div class="meme-bg" style="background-image:url('{{BG_URL}}')"></div>
+<div class="meme-grad"></div>
+<div class="meme-frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="meme-title">{{TITLE}}</div>
+  <div class="meme-sub">{{SUBTITLE}}</div>
+  <div class="meme-footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{DATE}}</div>
+  </div>
+</div>

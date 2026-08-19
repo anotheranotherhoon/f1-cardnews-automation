@@ -1,0 +1,28 @@
+<!-- track: 트랙 소개 (프리뷰)
+     {{CSS}} {{BG_URL}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{LEN}} {{LAPS}} {{LOCATION}} {{DESC}} {{NOTE}} {{DATE}} -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.stats { display: flex; gap: 18px; margin-top: 46px; }
+.chip { background: rgba(255,255,255,0.07); border-radius: 16px; padding: 24px 30px; flex: 1; }
+.chip .k { font-size: 22px; color: #9a9aa8; letter-spacing: 2px; }
+.chip .v { font-size: 42px; font-weight: 900; margin-top: 8px; font-variant-numeric: tabular-nums; }
+.desc { flex: 1; margin-top: 44px; font-size: 34px; line-height: 1.65; color: #e4e4ec; word-break: keep-all; }
+</style>
+<div class="bg" style="background-image:url('{{BG_URL}}')"></div>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="stats">
+    <div class="chip"><div class="k">LENGTH</div><div class="v">{{LEN}}</div></div>
+    <div class="chip"><div class="k">LAPS</div><div class="v">{{LAPS}}</div></div>
+    <div class="chip"><div class="k">LOCATION</div><div class="v" style="font-size:30px">{{LOCATION}}</div></div>
+  </div>
+  <div class="desc">{{DESC}}</div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

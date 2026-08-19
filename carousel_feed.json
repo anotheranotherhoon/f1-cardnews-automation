@@ -1,0 +1,372 @@
+{
+  "name": "carousel_feed",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        -16
+      ],
+      "id": "745ccaf7-a29b-41d2-861d-f4819c2e36a7",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{$node[\"Config\"].json[\"telegramChatId\"]}}",
+        "message": "이 피드를 등록할까요 ?",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -480,
+        -48
+      ],
+      "id": "05cabe4c-d9b7-4dbc-bec2-40c211e6594e",
+      "name": "Send a text message",
+      "webhookId": "2073e77e-f40e-4cf7-93c1-b4c2f2ade8d8",
+      "credentials": {
+        "telegramApi": {
+          "id": "<n8n telegram credential id>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "274d204a-848a-4d7d-8ecb-51d319a92ae2",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -240,
+        -48
+      ],
+      "id": "c6859555-ced4-4700-9fb5-2dee2d5e921d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.instagram.com/v24.0/{{$items('Config')[0].json.igUserId}}/media",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"image_url\": \"{{$json.imageUrls}}\",\n  \"is_carousel_item\": true,\n  \"access_token\": \"{{$items('Config')[0].json.igAccessToken}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        448,
+        -64
+      ],
+      "id": "ba66e823-7bb6-4355-a191-8c67f97f26d4",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.instagram.com/v24.0/{{$items('Config')[0].json.igUserId}}/media_publish",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"creation_id\": \"{{$json.id}}\",\n  \"access_token\": \"{{$items('Config')[0].json.igAccessToken}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1664,
+        -144
+      ],
+      "id": "33521abd-1f4c-45d9-b2a6-395c37a6d715",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bf63ec59-e980-44b6-9a0a-f12eea6c52a7",
+              "name": "igUserId",
+              "value": "<IG_USER_ID>",
+              "type": "string"
+            },
+            {
+              "id": "64aa3966-cf47-4023-ab7e-1bcf9143a9fe",
+              "name": "igAccessToken",
+              "value": "<IG_ACCESS_TOKEN — n8n Credentials 로 이전됨>",
+              "type": "string"
+            },
+            {
+              "id": "0203af5a-54be-4141-b13b-bb60bcc2db98",
+              "name": "telegramChatId",
+              "value": "<TELEGRAM_CHAT_ID>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        -32
+      ],
+      "id": "3f420dad-8391-4033-be95-3acdc50ed37d",
+      "name": "Config"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        -16
+      ],
+      "id": "bdbb99be-5211-447e-af9a-d295b13a09aa",
+      "name": "Wait",
+      "webhookId": "dbdd2db4-eefe-4db6-ba70-5a3fa51661c3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1392,
+        -128
+      ],
+      "id": "62146094-77a8-4525-85f9-3f7fa053a234",
+      "name": "Wait1",
+      "webhookId": "75a6ac53-0a38-4a7a-96d4-319acc3b0f63"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "imageUrls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -224
+      ],
+      "id": "2e96e662-bc29-4bdb-a800-eb529f227cbc",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"caption\": \"#후니스피드 #F1\",\n  \"imageUrls\": [\n    \"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200\",\n    \"https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200\",\n    \"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200\",\n    \"https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200\",\n    \"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200\",\n    \"https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200\",\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        -336
+      ],
+      "id": "fe7b4c30-fb9e-4f87-b2ae-ee7205ba0c80",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.instagram.com/v24.0/{{$items('Config')[0].json.igUserId}}/media",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"media_type\": \"CAROUSEL\",\n  \"children\": \"{{$json.children}}\",\n  \"caption\": \"#후니스피드 #F1\",\n  \"access_token\": \"{{$items('Config')[0].json.igAccessToken}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1184,
+        -160
+      ],
+      "id": "676d5f18-c7cc-4193-b0a5-b15eeeca22f6",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const ids = items.map(i => i.json.id);\n\nreturn [{\n  json: {\n    children: ids.join(',')\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -128
+      ],
+      "id": "50f9399c-bc16-44fe-acb5-c8a166e64bd9",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        []
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "aba00c07-75b5-4e9e-b928-6a721668bcd4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ce14e15e9343f9217fcb8a8954e8d325f4a8d4b4101e443e36ef338c28c3746c"
+  },
+  "nodeGroups": [],
+  "id": "RFev8osU9pPeUDhk",
+  "tags": []
+}

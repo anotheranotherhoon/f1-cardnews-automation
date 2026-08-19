@@ -1,0 +1,23 @@
+<!-- timetable: 주말 세션 시간표 (KST)
+     {{CSS}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{ROWS_HTML}} {{NOTE}} {{DATE}}
+     행: <div class="tt-row [hl]"><div class="tt-session">퀄리파잉</div><div class="tt-time">8월 22일 (토) 23:00</div></div> -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.tt { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; margin-top: 40px; }
+.tt-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.055); border-radius: 16px; padding: 26px 34px; }
+.tt-row.hl { background: rgba(225,6,0,0.2); outline: 2px solid rgba(225,6,0,0.5); }
+.tt-session { font-size: 36px; font-weight: 800; }
+.tt-time { font-size: 34px; font-weight: 600; color: #d8d8e2; font-variant-numeric: tabular-nums; }
+</style>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="tt">{{ROWS_HTML}}</div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

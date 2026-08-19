@@ -1,0 +1,24 @@
+<!-- text-card: 이슈 요약 / 타이어 컴파운드 / DOTD 등 텍스트 중심 카드
+     {{CSS}} {{BG_URL}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{BODY_HTML}} {{CHIP_HTML}} {{NOTE}} {{DATE}}
+     BODY_HTML: <p>...</p> 문단들 / CHIP_HTML: 하이라이트 칩 (Fastest Lap 등, 없으면 빈 값) -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.body { flex: 1; margin-top: 48px; font-size: 36px; line-height: 1.7; color: #e8e8ef; word-break: keep-all; }
+.body p + p { margin-top: 28px; }
+.hl-chip { display: inline-flex; align-items: center; gap: 16px; background: rgba(160, 60, 255, 0.18); outline: 2px solid rgba(160, 60, 255, 0.5); border-radius: 16px; padding: 20px 28px; margin-top: 36px; }
+.hl-chip .k { font-size: 24px; font-weight: 800; letter-spacing: 3px; color: #c9a0ff; }
+.hl-chip .v { font-size: 32px; font-weight: 800; }
+</style>
+<div class="bg" style="background-image:url('{{BG_URL}}')"></div>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="body">{{BODY_HTML}}{{CHIP_HTML}}</div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>후니스피드 카드 편집</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0b0b14; color: #f5f5f7; font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
+         padding: 16px 14px 120px; -webkit-text-size-adjust: 100%; }
+  .head { padding-bottom: 14px; border-bottom: 1px solid #23232f; margin-bottom: 18px; }
+  .head h1 { font-size: 19px; font-weight: 800; }
+  .head .meta { font-size: 12px; color: #7a7a88; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .card { background: #12121c; border: 1px solid #23232f; border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+  .card > h2 { font-size: 14px; font-weight: 800; color: #ff4d45; letter-spacing: 1px; margin-bottom: 12px; }
+  .body { display: flex; gap: 14px; align-items: flex-start; }
+  .thumb { width: 96px; flex: none; border-radius: 8px; border: 1px solid #2a2a38; background: #0b0b14; }
+  .fields { flex: 1; min-width: 0; }
+  label { display: block; font-size: 11px; color: #8a8a98; margin: 10px 0 4px; letter-spacing: .5px; }
+  label:first-child { margin-top: 0; }
+  input[type=text], textarea {
+    width: 100%; background: #1b1b28; color: #f5f5f7; border: 1px solid #2f2f3e; border-radius: 8px;
+    padding: 10px 11px; font-size: 15px; font-family: inherit; line-height: 1.45; }
+  textarea { resize: vertical; min-height: 62px; }
+  input:focus, textarea:focus { outline: none; border-color: #e10600; }
+  .sub { border-left: 3px solid #e10600; padding-left: 11px; margin-top: 12px; }
+  .regen { display: flex; align-items: center; gap: 9px; margin-top: 12px; font-size: 13px; color: #b9b9c6; }
+  .regen input { width: 18px; height: 18px; accent-color: #e10600; }
+  .regen .cost { color: #ffb84d; font-size: 12px; }
+  .locked { font-size: 12px; color: #6e6e7c; margin-top: 10px; line-height: 1.5; }
+  .cmt { margin-top: 12px; padding-top: 12px; border-top: 1px dashed #2f2f3e; }
+  .cmt label { color: #ffb84d; }
+  .cmt textarea { min-height: 48px; border-color: #3a3222; background: #1d1a12; }
+  .global { background: #12121c; border: 1px solid #3a3222; border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+  .global h2 { font-size: 14px; font-weight: 800; color: #ffb84d; letter-spacing: 1px; margin-bottom: 6px; }
+  .global p { font-size: 12px; color: #7a7a88; line-height: 1.55; margin-bottom: 10px; }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+         background: rgba(11,11,20,.96); border-top: 1px solid #23232f; display: flex; gap: 10px; }
+  button { flex: 1; border: 0; border-radius: 10px; padding: 15px 0; font-size: 15px; font-weight: 800;
+           font-family: inherit; color: #fff; }
+  #revise { background: #2a2a3a; }
+  #publish { background: #e10600; }
+  button:disabled { opacity: .5; }
+  #msg { position: fixed; inset: 0; display: none; place-items: center; background: rgba(11,11,20,.94); text-align: center; padding: 30px; }
+  #msg.on { display: grid; }
+  #msg .ico { font-size: 54px; }
+  #msg h2 { font-size: 19px; margin: 14px 0 8px; }
+  #msg p { color: #9a9aa8; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1 id="title">불러오는 중…</h1>
+  <div class="meta" id="meta"></div>
+</div>
+<div class="global">
+  <h2>전체 코멘트</h2>
+  <p>카드 전체에 걸친 지시를 자연어로 적어주세요. 비워두면 아무 일도 일어나지 않습니다.<br>예) 문장을 더 짧고 구어체로 · 반말로 바꿔줘</p>
+  <textarea id="globalNote" placeholder="예) 전체적으로 더 짧고 임팩트 있게"></textarea>
+</div>
+<div id="list"></div>
+<div class="bar">
+  <button id="revise">수정 반영</button>
+  <button id="publish">그대로 발행</button>
+</div>
+<div id="msg"><div><div class="ico" id="mi">✅</div><h2 id="mt"></h2><p id="mp"></p></div></div>
+
+<script>
+// 템플릿별 편집 가능한 필드. 여기 없는 값(순위 행 등)은 데이터에서 오므로 편집하지 않는다.
+var SCHEMA = {
+  'cover-data':    [['title','제목'],['subtitle','부제']],
+  'cover-preview': [['title','제목'],['subtitle','부제']],
+  'cover-recap':   [['title','제목'],['subtitle','부제']],
+  'result-full':   [['title','제목'],['subtitle','부제'],['note','비고']],
+  'session-result':[['session','세션명']],
+  'standings':     [['title','제목']],
+  'issue-blocks':  [['session','세션명']],
+  'dotd-card':     [['driver','드라이버'],['team','팀'],['body','선정 이유',1]],
+  'stints':        [['title','제목']],
+  'track':         [['title','제목'],['subtitle','부제'],['desc','설명',1],['note','비고']],
+  'text-card':     [['title','제목'],['body','본문',1]],
+  'timetable':     [['title','제목']],
+  'lineup':        [['title','제목']],
+  'grid':          [['title','제목'],['note','비고']],
+  'quali-elims':   [['subtitle','부제']],
+  'podium':        [['title','제목']],
+  'story':         [['title','후킹 문구'],['subtitle','부제'],['cta','유도 문구']],
+  'story-podium':  [['title','후킹 문구'],['subtitle','부제'],['cta','유도 문구']]
+};
+var LABEL = { cover:'표지', 'race-result':'레이스 결과', issue:'이슈', dotd:'DOTD', stints:'타이어 전략',
+  'standings-drivers':'드라이버 순위', 'standings-constructors':'컨스트럭터 순위', story:'스토리',
+  track:'트랙', tires:'타이어', podium:'포디움', timetable:'시간표', lineup:'라인업',
+  'quali-top':'Q3', 'quali-elims':'탈락 구간', grid:'그리드', 'sprint-result':'스프린트 결과' };
+
+var draft = null;
+var tg = window.Telegram && window.Telegram.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+
+function el(t, a) { var e = document.createElement(t); if (a) for (var k in a) e.setAttribute(k, a[k]); return e; }
+
+function field(key, label, multiline, val, store) {
+  var wrap = el('div');
+  var l = el('label'); l.textContent = label; wrap.appendChild(l);
+  var i = multiline ? el('textarea') : el('input', { type: 'text' });
+  i.value = val == null ? '' : String(val);
+  i.addEventListener('input', function () { store[key] = i.value; touched = true; });
+  wrap.appendChild(i);
+  return wrap;
+}
+
+function renderCard(idx, c, isStory) {
+  var box = el('div', { class: 'card' });
+  var h = el('h2');
+  h.textContent = isStory ? '인스타 스토리' : ('카드 ' + (idx + 1) + ' · ' + (LABEL[c.type] || c.type));
+  box.appendChild(h);
+
+  var body = el('div', { class: 'body' });
+  if (c.image) { var im = el('img', { class: 'thumb', src: c.image, alt: '' }); body.appendChild(im); }
+  var fields = el('div', { class: 'fields' });
+  c.data = c.data || {};
+
+  var defs = SCHEMA[c.template] || [['title', '제목']];
+  defs.forEach(function (d) { fields.appendChild(field(d[0], d[1], d[2], c.data[d[0]], c.data)); });
+
+  // 이슈 블록은 개수가 가변이라 따로 그린다
+  if (c.template === 'issue-blocks') {
+    c.data.issues = c.data.issues || [];
+    c.data.issues.forEach(function (iss, n) {
+      var s = el('div', { class: 'sub' });
+      s.appendChild(field('head', '이슈 ' + (n + 1) + ' 제목', 0, iss.head, iss));
+      s.appendChild(field('body', '이슈 ' + (n + 1) + ' 본문', 1, iss.body, iss));
+      fields.appendChild(s);
+    });
+  }
+
+  // 새로 생성하면 요금이 드는 항목만 체크박스로 노출
+  if (c.regenerable) {
+    var r = el('div', { class: 'regen' });
+    var cb = el('input', { type: 'checkbox' });
+    cb.addEventListener('change', function () { c.regen = cb.checked; });
+    r.appendChild(cb);
+    var t = el('span'); t.textContent = c.regenLabel || '이미지 다시 생성';
+    r.appendChild(t);
+    var cost = el('span', { class: 'cost' }); cost.textContent = '55원';
+    r.appendChild(cost);
+    fields.appendChild(r);
+  }
+  if (c.lockedNote) { var ln = el('div', { class: 'locked' }); ln.textContent = c.lockedNote; fields.appendChild(ln); }
+
+  // 정확한 문구를 모를 때 자연어로 지시하는 칸
+  var cw = el('div', { class: 'cmt' });
+  cw.appendChild(field('comment', '이 카드에 하고 싶은 말 (자연어)', 1, c.comment, c));
+  fields.appendChild(cw);
+
+  body.appendChild(fields);
+  box.appendChild(body);
+  return box;
+}
+
+function done(ico, title, text) {
+  document.getElementById('mi').textContent = ico;
+  document.getElementById('mt').textContent = title;
+  document.getElementById('mp').textContent = text;
+  document.getElementById('msg').classList.add('on');
+  if (tg) setTimeout(function () { tg.close(); }, 1800);
+}
+
+var touched = false;
+function submit(action) {
+  // 문구를 고쳐놓고 '그대로 발행'을 누르면 편집이 버려진다 — 명시적으로 확인받는다
+  if (action === 'publish' && touched &&
+      !confirm('수정한 내용은 반영되지 않고 현재 카드가 그대로 발행됩니다.\n계속할까요?')) return;
+  document.getElementById('revise').disabled = true;
+  document.getElementById('publish').disabled = true;
+  var payload = {
+    action: action,
+    dirName: draft.dirName,
+    note: (document.getElementById('globalNote').value || '').trim(),
+    cards: draft.cards.map(function (c) {
+      return { type: c.type, template: c.template, data: c.data, regen: !!c.regen, comment: (c.comment || '').trim() };
+    }),
+    story: draft.story ? { template: draft.story.template, data: draft.story.data,
+      regen: !!draft.story.regen, comment: (draft.story.comment || '').trim() } : null
+  };
+  fetch(draft.resumeUrl, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+  }).then(function () {
+    done('✅', action === 'publish' ? '발행 요청 접수' : '수정 요청 접수',
+      action === 'publish' ? '인스타그램에 올라갑니다' : '수정된 카드만 다시 만듭니다');
+  }).catch(function (e) {
+    done('⚠️', '전송 실패', String(e));
+    document.getElementById('revise').disabled = false;
+    document.getElementById('publish').disabled = false;
+  });
+}
+
+document.getElementById('revise').addEventListener('click', function () { submit('revise'); });
+document.getElementById('publish').addEventListener('click', function () { submit('publish'); });
+
+(function () {
+  var dir = new URLSearchParams(location.search).get('d');
+  if (!dir) { document.getElementById('title').textContent = '주소에 ?d=<폴더명>이 없습니다'; return; }
+  fetch('./' + dir + '/draft.json?t=' + Date.now()).then(function (r) { return r.json(); }).then(function (d) {
+    draft = d;
+    document.getElementById('title').textContent = (d.raceName || '') + ' ' + (d.dayLabel || '');
+    document.getElementById('meta').textContent = d.dirName + ' · ' + (d.createdKst || '') + ' 생성'
+      + (d.revision ? ' · 수정 ' + d.revision + '회차' : '');
+    var list = document.getElementById('list');
+    (d.cards || []).forEach(function (c, i) { list.appendChild(renderCard(i, c, false)); });
+    if (d.story) list.appendChild(renderCard(0, d.story, true));
+  }).catch(function (e) {
+    document.getElementById('title').textContent = '초안을 불러올 수 없습니다';
+    document.getElementById('meta').textContent = String(e);
+  });
+})();
+</script>
+</body>
+</html>

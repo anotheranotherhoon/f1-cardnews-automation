@@ -1,0 +1,47 @@
+<!-- grid: 레이스 스타팅 그리드 — 실제 그리드를 위에서 내려다본 지그재그 배치
+     홀수 그리드는 왼쪽 열, 짝수는 오른쪽 열이며 오른쪽 열이 반 칸 아래로 밀려 어긋난다.
+     {{CSS}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{LEFT_ROWS_HTML}} {{RIGHT_ROWS_HTML}} {{NOTE}} {{DATE}}
+     행: <div class="g-row p1 t-mclaren"><div class="g-pos">1</div><div class="g-bar"></div><div class="g-name">L. Norris</div></div> -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.startline { display: flex; align-items: center; gap: 14px; margin-top: 36px; }
+.startline .bar { flex: 1; height: 8px; border-radius: 4px;
+  background: repeating-linear-gradient(90deg, #f5f5f7 0 16px, #2a2a38 16px 32px); }
+.startline .lbl { font-size: 20px; font-weight: 800; letter-spacing: 4px; color: #8a8a98; }
+
+.gr { flex: 1; position: relative; display: flex; gap: 26px; margin-top: 18px; }
+/* 두 열 사이의 트랙 중앙선 */
+.gr::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 8px; width: 2px;
+  transform: translateX(-1px);
+  background: repeating-linear-gradient(180deg, rgba(255,255,255,0.16) 0 12px, transparent 12px 26px); }
+.gcol { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+/* 짝수 그리드는 반 칸 뒤 — 실제 그리드의 어긋난 배치 */
+.gcol.right { margin-top: 33px; }
+
+.g-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.06);
+         border-radius: 10px; padding: 9px 14px; }
+.g-row.p1 { background: rgba(225,6,0,0.24); outline: 2px solid rgba(225,6,0,0.6); }
+.g-pos { width: 40px; font-size: 26px; font-weight: 900; font-style: italic; text-align: center; }
+.g-bar { width: 7px; height: 30px; border-radius: 4px; background: var(--team, #666); flex: none; }
+.g-name { flex: 1; min-width: 0; font-size: 23px; font-weight: 700;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+</style>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="startline">
+    <div class="lbl">START</div>
+    <div class="bar"></div>
+  </div>
+  <div class="gr">
+    <div class="gcol left">{{LEFT_ROWS_HTML}}</div>
+    <div class="gcol right">{{RIGHT_ROWS_HTML}}</div>
+  </div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

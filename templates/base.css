@@ -1,0 +1,52 @@
+/* 후니스피드 카드 공용 스타일 — 1080×1350 (IG 4:5), self-contained */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1350px; overflow: hidden; }
+body {
+  font-family: 'Noto Sans KR', 'Noto Sans CJK KR', sans-serif;
+  background: #0b0b14;
+  color: #f5f5f7;
+  position: relative;
+}
+.bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0.35;
+}
+.bg-dim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,20,0.55) 0%, rgba(11,11,20,0.92) 78%); }
+.frame { position: relative; z-index: 2; height: 100%; padding: 72px 64px; display: flex; flex-direction: column; }
+
+/* 헤더 */
+.kicker { font-size: 28px; font-weight: 700; letter-spacing: 6px; color: #e10600; text-transform: uppercase; }
+.title { font-size: 56px; font-weight: 900; line-height: 1.14; margin-top: 12px; word-break: keep-all; }
+.subtitle { font-size: 30px; font-weight: 500; color: #b9b9c6; margin-top: 10px; }
+
+/* 순위 테이블 */
+.rows { margin-top: 36px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+.row {
+  display: flex; align-items: center; gap: 20px;
+  background: rgba(255,255,255,0.055);
+  border-radius: 14px; padding: 11px 24px;
+}
+.row.p1 { background: rgba(225,6,0,0.22); outline: 2px solid rgba(225,6,0,0.55); }
+.pos { width: 60px; font-size: 34px; font-weight: 900; font-style: italic; color: #fff; }
+.teambar { width: 9px; height: 42px; border-radius: 4px; background: var(--team, #666); }
+.drv { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 14px; }
+.drv .name { font-size: 31px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drv .team { font-size: 21px; color: #9a9aa8; }
+.metric { font-size: 29px; font-weight: 700; font-variant-numeric: tabular-nums; color: #e8e8ef; text-align: right; }
+.metric small { font-size: 21px; color: #9a9aa8; font-weight: 500; }
+.delta-up { color: #24c26b; } .delta-down { color: #ff5a5a; } .delta-flat { color: #8a8a98; }
+
+/* 푸터 */
+.footer { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; }
+.brand { font-size: 28px; font-weight: 800; letter-spacing: 2px; color: #fff; }
+.brand span { color: #e10600; }
+.note { font-size: 22px; color: #7d7d8c; }
+
+/* 팀 컬러 */
+.t-red_bull { --team: #3671C6; } .t-ferrari { --team: #E8002D; }
+.t-mercedes { --team: #27F4D2; } .t-mclaren { --team: #FF8000; }
+.t-aston_martin { --team: #229971; } .t-alpine { --team: #FF87BC; }
+.t-williams { --team: #64C4FF; } .t-rb, .t-racing_bulls { --team: #6692FF; }
+.t-sauber, .t-audi { --team: #52E252; } .t-haas { --team: #B6BABD; }
+.t-cadillac { --team: #D4AF37; } .t-default { --team: #888; }

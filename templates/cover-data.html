@@ -1,0 +1,26 @@
+<!-- cover-data: 금~일 데이터형 표지 (밈 아님)
+     {{CSS}} {{BG_URL}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{BADGE}} {{DATE}} -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.cv { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.cv .kicker { font-size: 34px; }
+.cv-title { font-size: 96px; font-weight: 900; line-height: 1.1; margin-top: 24px; word-break: keep-all; }
+.cv-sub { font-size: 44px; font-weight: 600; color: #d0d0da; margin-top: 30px; word-break: keep-all; }
+.badge { display: inline-block; align-self: flex-start; background: #e10600; color: #fff; font-size: 28px; font-weight: 800; letter-spacing: 3px; border-radius: 10px; padding: 12px 24px; margin-top: 44px; }
+.badge:empty { display: none; }
+</style>
+<div class="bg" style="background-image:url('{{BG_URL}}'); opacity: 0.5;"></div>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="cv">
+    <div class="kicker">{{KICKER}}</div>
+    <div class="cv-title">{{TITLE}}</div>
+    <div class="cv-sub">{{SUBTITLE}}</div>
+    <div class="badge">{{BADGE}}</div>
+  </div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{DATE}}</div>
+  </div>
+</div>

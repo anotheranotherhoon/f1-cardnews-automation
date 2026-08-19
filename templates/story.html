@@ -1,0 +1,40 @@
+<!-- story: 인스타 스토리 (1080×1920) — Gemini 밈 이미지 배경 + 한국어 카피 + 피드 유도
+     {{CSS}} {{BG_URL}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{CTA}} -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+html, body { width: 1080px; height: 1920px; }
+.st-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.st-grad {
+  position: absolute; inset: 0;
+  /* 상단은 키커 가독성용, 중하단은 생성 이미지의 경계선을 자연스럽게 덮는다 */
+  background: linear-gradient(180deg, rgba(11,11,20,0.72) 0%, rgba(11,11,20,0.15) 16%,
+                              rgba(11,11,20,0) 34%, rgba(11,11,20,0.45) 52%,
+                              rgba(11,11,20,0.85) 66%, rgba(11,11,20,0.97) 82%, #0b0b14 100%);
+}
+.st-frame { position: relative; z-index: 2; height: 100%; padding: 120px 80px 160px; display: flex; flex-direction: column; }
+.st-top { text-align: center; }
+.st-kicker { font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #ff2d24; text-transform: uppercase;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.9), 0 0 3px rgba(0,0,0,0.8); }
+.st-body { margin-top: auto; }
+.st-title { font-size: 92px; font-weight: 900; line-height: 1.14; word-break: keep-all; text-shadow: 0 6px 30px rgba(0,0,0,0.75); }
+.st-sub { font-size: 44px; font-weight: 600; color: #e2e2ea; margin-top: 26px; word-break: keep-all; text-shadow: 0 3px 20px rgba(0,0,0,0.7); }
+.st-cta {
+  display: inline-flex; align-items: center; gap: 14px; margin-top: 52px;
+  background: rgba(225,6,0,0.92); border-radius: 999px; padding: 26px 44px;
+  font-size: 38px; font-weight: 800;
+}
+.st-brand { margin-top: 60px; font-size: 34px; font-weight: 800; letter-spacing: 3px; color: #fff; }
+.st-brand span { color: #e10600; }
+</style>
+<div class="st-bg" style="background-image:url('{{BG_URL}}')"></div>
+<div class="st-grad"></div>
+<div class="st-frame">
+  <div class="st-top"><div class="st-kicker">{{KICKER}}</div></div>
+  <div class="st-body">
+    <div class="st-title">{{TITLE}}</div>
+    <div class="st-sub">{{SUBTITLE}}</div>
+    <div class="st-cta">{{CTA}}</div>
+    <div class="st-brand">hooni<span>.speed</span></div>
+  </div>
+</div>

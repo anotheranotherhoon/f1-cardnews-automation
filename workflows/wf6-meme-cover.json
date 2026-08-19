@@ -1,0 +1,312 @@
+{
+  "id": "HooniWF6Meme00001",
+  "name": "HooniSpeed WF-6 meme-cover",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a6000001-0000-4000-8000-000000000000",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googlePalmApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ contents: [{ parts: [{ text: 'F1 인스타그램 카드뉴스의 표지를 만든다. 아래 데이터를 보고 순수 JSON만 출력 (코드펜스 금지):\\n{\"title\": \"한국어 후킹 제목 (12자 이내, 밈/드립 허용, 과장은 OK지만 허위사실 금지)\", \"subtitle\": \"한국어 부제 (20자 이내)\", \"driverCode\": \"표지 주인공 드라이버 3글자 코드 (예: VER, NOR). 특정 인물이 주인공이 아니면 null\", \"imagePrompt\": \"영어 이미지 생성 프롬프트: 카툰 스타일 F1 장면 묘사. 텍스트/로고 없이, 세로 4:5 구도, 하단 40%는 자막을 올릴 수 있게 단순하게. 인물이 있으면 그 드라이버의 팀 컬러 레이싱슈트로 묘사\"}\\n\\n[유형] ' + $json.dayType + '\\n[대회] ' + $json.season + ' ' + $json.raceName + '\\n[카드 데이터] ' + JSON.stringify(($json.cards || []).map(function(c) { return { type: c.type, data: c.data }; })).slice(0, 3000) }] }], generationConfig: { temperature: 0.9 } }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "a6000002-0000-4000-8000-000000000000",
+      "name": "Meme Concept",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 15000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AifvQiKATiVwan2T",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst p = $('When Executed by Another Workflow').first().json;\nlet concept = null;\ntry {\n  const text = $input.first().json.candidates[0].content.parts.map((x) => x.text || '').join('');\n  concept = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));\n} catch (e) { concept = null; }\n// 컨셉 실패 시 밈 없이 데이터 표지로 진행 (발행은 멈추지 않는다)\nif (!concept || !concept.imagePrompt) return [{ json: { ...p, skip: true } }];\nconst code = (concept.driverCode || '').toLowerCase().replace(/[^a-z]/g, '');\nlet refPath = null, needChar = false;\nif (code) {\n  const dir = '/data/hooni_speed/assets/characters/' + code;\n  for (const f of ['base.png', '_pending.png']) {\n    try { if (fs.statSync(dir + '/' + f).size > 0) { refPath = dir + '/' + f; break; } } catch (e) {}\n  }\n  if (!refPath) {\n    try { const poses = fs.readdirSync(dir + '/poses'); if (poses.length) refPath = dir + '/poses/' + poses[0]; } catch (e) {}\n  }\n  needChar = !refPath;\n}\nreturn [{ json: { ...p, concept, driverCode: code || null, refPath, needChar, skip: false } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "a6000003-0000-4000-8000-000000000000",
+      "name": "Parse Concept"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.needChar }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "a6000004-0000-4000-8000-000000000000",
+      "name": "IF Need Character"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googlePalmApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ contents: [{ parts: [{ text: 'Cartoon character illustration of the Formula 1 driver with code \"' + $json.driverCode.toUpperCase() + '\" in their team racing suit, holding helmet under one arm, full body, centered, plain white background. Consistent art style: flat vector cartoon illustration, bold clean outlines, simple cel shading, vivid saturated colors, no text, no watermark, no logos' }] }], generationConfig: { responseModalities: ['IMAGE'] } }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        -120
+      ],
+      "id": "a6000005-0000-4000-8000-000000000000",
+      "name": "Gen Character",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 15000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AifvQiKATiVwan2T",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst p = $('Parse Concept').first().json;\nconst parts = ((($input.first().json.candidates || [])[0] || {}).content || {}).parts || [];\nconst img = parts.find((x) => x.inlineData || x.inline_data);\nif (!img) return [{ json: { ...p, refPath: null } }]; // 캐릭터 생성 실패 → 레퍼런스 없이 표지 생성\nconst d = img.inlineData || img.inline_data;\nconst dir = '/data/hooni_speed/assets/characters/' + p.driverCode;\nfs.mkdirSync(dir, { recursive: true });\nconst out = dir + '/_pending.png';\nfs.writeFileSync(out, Buffer.from(d.data, 'base64'));\nreturn [{ json: { ...p, refPath: out, charPending: out } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        -120
+      ],
+      "id": "a6000006-0000-4000-8000-000000000000",
+      "name": "Save Character"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst p = $input.first().json;\nconst parts = [];\nif (p.refPath) {\n  try { parts.push({ inlineData: { mimeType: 'image/png', data: fs.readFileSync(p.refPath).toString('base64') } }); } catch (e) {}\n}\nconst ref = p.refPath ? ' Keep the exact same character identity and art style as the reference image.' : '';\nparts.push({ text: p.concept.imagePrompt + ref + ' Consistent art style: flat vector cartoon illustration, bold clean outlines, simple cel shading, vivid saturated colors, no text, no watermark, no logos' });\nreturn [{ json: { ...p, geminiBody: { contents: [{ parts }], generationConfig: { responseModalities: ['IMAGE'] } } } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "a6000007-0000-4000-8000-000000000000",
+      "name": "Build Image Req"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googlePalmApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.geminiBody) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1540,
+        0
+      ],
+      "id": "a6000008-0000-4000-8000-000000000000",
+      "name": "Gen Cover",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 15000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AifvQiKATiVwan2T",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst p = $('Build Image Req').first().json;\nconst cards = JSON.parse(JSON.stringify(p.cards));\nconst parts = ((($input.first().json.candidates || [])[0] || {}).content || {}).parts || [];\nconst img = parts.find((x) => x.inlineData || x.inline_data);\nif (img) {\n  const d = img.inlineData || img.inline_data;\n  const dir = '/data/hooni_speed/assets/meme';\n  fs.mkdirSync(dir, { recursive: true });\n  const out = dir + '/' + p.season + '-r' + p.round + '-' + p.dayType + '.png';\n  fs.writeFileSync(out, Buffer.from(d.data, 'base64'));\n  cards[0].data = { ...cards[0].data, bgFile: out };\n}\n// 이미지가 없어도 카피는 반영 (데이터 표지로 렌더)\nif (p.concept.title) cards[0].data.title = p.concept.title;\nif (p.concept.subtitle) cards[0].data.subtitle = p.concept.subtitle;\nconst out = { ...p, cards };\ndelete out.geminiBody;\nreturn [{ json: out }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        0
+      ],
+      "id": "a6000009-0000-4000-8000-000000000000",
+      "name": "Save Cover"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        200
+      ],
+      "id": "a6000010-0000-4000-8000-000000000000",
+      "name": "Passthrough"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Meme Concept",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meme Concept": {
+      "main": [
+        [
+          {
+            "node": "Parse Concept",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Concept": {
+      "main": [
+        [
+          {
+            "node": "IF Need Character",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Need Character": {
+      "main": [
+        [
+          {
+            "node": "Gen Character",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Image Req",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen Character": {
+      "main": [
+        [
+          {
+            "node": "Save Character",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Character": {
+      "main": [
+        [
+          {
+            "node": "Build Image Req",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Image Req": {
+      "main": [
+        [
+          {
+            "node": "Gen Cover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen Cover": {
+      "main": [
+        [
+          {
+            "node": "Save Cover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "errorWorkflow": "HooniWFErr00001"
+  },
+  "active": true
+}

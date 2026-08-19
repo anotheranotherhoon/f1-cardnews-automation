@@ -1,0 +1,37 @@
+<!-- quali-elims: Q1/Q2 탈락자 (두 섹션)
+     {{CSS}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{Q2_LABEL}} {{Q2_ROWS_HTML}} {{Q1_LABEL}} {{Q1_ROWS_HTML}} {{NOTE}} {{DATE}}
+     행은 session-result의 .row 재사용 (compact) -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.sec { margin-top: 26px; }
+.sec-title { font-size: 30px; font-weight: 800; color: #ffb84d; letter-spacing: 2px; margin-bottom: 14px; }
+.sec .rows { margin-top: 0; flex: none; gap: 8px; }
+/* 22대 그리드면 탈락자가 12명이라 기본 행 높이로는 카드를 넘친다 — 이 카드에서만 압축한다 */
+.sec .row { padding: 7px 22px; }
+.sec .pos { width: 54px; font-size: 30px; }
+.sec .teambar { height: 34px; }
+.sec .drv .name { font-size: 28px; }
+.sec .drv .team { font-size: 19px; }
+.sec .metric { font-size: 26px; }
+.spacer { flex: 1; }
+</style>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="sec">
+    <div class="sec-title">{{Q2_LABEL}}</div>
+    <div class="rows">{{Q2_ROWS_HTML}}</div>
+  </div>
+  <div class="sec">
+    <div class="sec-title">{{Q1_LABEL}}</div>
+    <div class="rows">{{Q1_ROWS_HTML}}</div>
+  </div>
+  <div class="spacer"></div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

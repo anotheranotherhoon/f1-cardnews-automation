@@ -1,0 +1,34 @@
+<!-- issue-blocks: 레이스 이슈를 주제별 블록으로 나눠 보여준다
+     배경 사진은 분위기용 장식이다 — 특정 장면을 찍은 기록이 아니므로 출처를 명시한다.
+     {{CSS}} {{BG_URL}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{BLOCKS_HTML}} {{CHIP_HTML}} {{CREDIT}} {{NOTE}} {{DATE}}
+     블록: <div class="ib"><div class="ib-head">피아스트리 리타이어</div><div class="ib-body">...</div></div> -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.ib-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.3; }
+.ib-dim { position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(11,11,20,0.72) 0%, rgba(11,11,20,0.88) 55%, rgba(11,11,20,0.96) 100%); }
+.ibs { flex: 1; display: flex; flex-direction: column; gap: 22px; margin-top: 40px; }
+.ib { background: rgba(255,255,255,0.06); border-left: 6px solid #e10600;
+      border-radius: 0 16px 16px 0; padding: 22px 26px; }
+.ib-head { font-size: 33px; font-weight: 800; margin-bottom: 10px; word-break: keep-all; }
+.ib-body { font-size: 28px; line-height: 1.6; color: #d8d8e2; word-break: keep-all; }
+.hl-chip { display: inline-flex; align-items: center; gap: 16px; background: rgba(160,60,255,0.2);
+           outline: 2px solid rgba(160,60,255,0.5); border-radius: 16px; padding: 18px 26px; margin-top: 8px; }
+.hl-chip .k { font-size: 22px; font-weight: 800; letter-spacing: 3px; color: #c9a0ff; }
+.hl-chip .v { font-size: 29px; font-weight: 800; }
+.credit { font-size: 18px; color: #6e6e7c; margin-top: 14px; }
+</style>
+<div class="ib-bg" style="background-image:url('{{BG_URL}}')"></div>
+<div class="ib-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="ibs">{{BLOCKS_HTML}}{{CHIP_HTML}}</div>
+  <div class="credit">{{CREDIT}}</div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

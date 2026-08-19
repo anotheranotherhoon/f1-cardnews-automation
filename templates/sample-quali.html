@@ -1,0 +1,121 @@
+<!-- session-result: FP/퀄리/스프린트/레이스 순위표 공용 템플릿
+     플레이스홀더: /* 후니스피드 카드 공용 스타일 — 1080×1350 (IG 4:5), self-contained */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1350px; overflow: hidden; }
+body {
+  font-family: 'Noto Sans KR', 'Noto Sans CJK KR', sans-serif;
+  background: #0b0b14;
+  color: #f5f5f7;
+  position: relative;
+}
+.bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0.35;
+}
+.bg-dim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,20,0.55) 0%, rgba(11,11,20,0.92) 78%); }
+.frame { position: relative; z-index: 2; height: 100%; padding: 72px 64px; display: flex; flex-direction: column; }
+
+/* 헤더 */
+.kicker { font-size: 28px; font-weight: 700; letter-spacing: 6px; color: #e10600; text-transform: uppercase; }
+.title { font-size: 56px; font-weight: 900; line-height: 1.14; margin-top: 12px; word-break: keep-all; }
+.subtitle { font-size: 30px; font-weight: 500; color: #b9b9c6; margin-top: 10px; }
+
+/* 순위 테이블 */
+.rows { margin-top: 36px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+.row {
+  display: flex; align-items: center; gap: 20px;
+  background: rgba(255,255,255,0.055);
+  border-radius: 14px; padding: 11px 24px;
+}
+.row.p1 { background: rgba(225,6,0,0.22); outline: 2px solid rgba(225,6,0,0.55); }
+.pos { width: 60px; font-size: 34px; font-weight: 900; font-style: italic; color: #fff; }
+.teambar { width: 9px; height: 42px; border-radius: 4px; background: var(--team, #666); }
+.drv { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 14px; }
+.drv .name { font-size: 31px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drv .team { font-size: 21px; color: #9a9aa8; }
+.metric { font-size: 29px; font-weight: 700; font-variant-numeric: tabular-nums; color: #e8e8ef; text-align: right; }
+.metric small { font-size: 21px; color: #9a9aa8; font-weight: 500; }
+.delta-up { color: #24c26b; } .delta-down { color: #ff5a5a; } .delta-flat { color: #8a8a98; }
+
+/* 푸터 */
+.footer { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; }
+.brand { font-size: 28px; font-weight: 800; letter-spacing: 2px; color: #fff; }
+.brand span { color: #e10600; }
+.note { font-size: 22px; color: #7d7d8c; }
+
+/* 팀 컬러 */
+.t-red_bull { --team: #3671C6; } .t-ferrari { --team: #E8002D; }
+.t-mercedes { --team: #27F4D2; } .t-mclaren { --team: #FF8000; }
+.t-aston_martin { --team: #229971; } .t-alpine { --team: #FF87BC; }
+.t-williams { --team: #64C4FF; } .t-rb, .t-racing_bulls { --team: #6692FF; }
+.t-sauber, .t-audi { --team: #52E252; } .t-haas { --team: #B6BABD; }
+.t-cadillac { --team: #D4AF37; } .t-default { --team: #888; }
+  Qualifying · Round 11 Hungarian Grand Prix 퀄리파잉 Q3 Top 10 <div class="row p1 t-mclaren"><div class="pos">1</div><div class="teambar"></div><div class="drv"><div class="name">Lando Norris</div><div class="team">McLaren</div></div><div class="metric">1:17.207</div></div><div class="row t-ferrari"><div class="pos">2</div><div class="teambar"></div><div class="drv"><div class="name">Lewis Hamilton</div><div class="team">Ferrari</div></div><div class="metric">1:17.219</div></div><div class="row t-ferrari"><div class="pos">3</div><div class="teambar"></div><div class="drv"><div class="name">Charles Leclerc</div><div class="team">Ferrari</div></div><div class="metric">1:17.445</div></div><div class="row t-mercedes"><div class="pos">4</div><div class="teambar"></div><div class="drv"><div class="name">Andrea Kimi Antonelli</div><div class="team">Mercedes</div></div><div class="metric">1:17.479</div></div><div class="row t-mclaren"><div class="pos">5</div><div class="teambar"></div><div class="drv"><div class="name">Oscar Piastri</div><div class="team">McLaren</div></div><div class="metric">1:17.684</div></div><div class="row t-red_bull"><div class="pos">6</div><div class="teambar"></div><div class="drv"><div class="name">Max Verstappen</div><div class="team">Red Bull</div></div><div class="metric">1:17.725</div></div><div class="row t-mercedes"><div class="pos">7</div><div class="teambar"></div><div class="drv"><div class="name">George Russell</div><div class="team">Mercedes</div></div><div class="metric">1:17.760</div></div><div class="row t-red_bull"><div class="pos">8</div><div class="teambar"></div><div class="drv"><div class="name">Isack Hadjar</div><div class="team">Red Bull</div></div><div class="metric">1:17.856</div></div><div class="row t-rb"><div class="pos">9</div><div class="teambar"></div><div class="drv"><div class="name">Arvid Lindblad</div><div class="team">RB F1 Team</div></div><div class="metric">1:18.281</div></div><div class="row t-audi"><div class="pos">10</div><div class="teambar"></div><div class="drv"><div class="name">Nico Hülkenberg</div><div class="team">Audi</div></div><div class="metric">1:18.686</div></div> 공식 결과 2026-07-26
+     ROWS_HTML 행 형식은 렌더러(Code 노드)가 생성 -->
+<meta charset="utf-8">
+<style>/* 후니스피드 카드 공용 스타일 — 1080×1350 (IG 4:5), self-contained */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1350px; overflow: hidden; }
+body {
+  font-family: 'Noto Sans KR', 'Noto Sans CJK KR', sans-serif;
+  background: #0b0b14;
+  color: #f5f5f7;
+  position: relative;
+}
+.bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0.35;
+}
+.bg-dim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,20,0.55) 0%, rgba(11,11,20,0.92) 78%); }
+.frame { position: relative; z-index: 2; height: 100%; padding: 72px 64px; display: flex; flex-direction: column; }
+
+/* 헤더 */
+.kicker { font-size: 28px; font-weight: 700; letter-spacing: 6px; color: #e10600; text-transform: uppercase; }
+.title { font-size: 56px; font-weight: 900; line-height: 1.14; margin-top: 12px; word-break: keep-all; }
+.subtitle { font-size: 30px; font-weight: 500; color: #b9b9c6; margin-top: 10px; }
+
+/* 순위 테이블 */
+.rows { margin-top: 36px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+.row {
+  display: flex; align-items: center; gap: 20px;
+  background: rgba(255,255,255,0.055);
+  border-radius: 14px; padding: 11px 24px;
+}
+.row.p1 { background: rgba(225,6,0,0.22); outline: 2px solid rgba(225,6,0,0.55); }
+.pos { width: 60px; font-size: 34px; font-weight: 900; font-style: italic; color: #fff; }
+.teambar { width: 9px; height: 42px; border-radius: 4px; background: var(--team, #666); }
+.drv { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 14px; }
+.drv .name { font-size: 31px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drv .team { font-size: 21px; color: #9a9aa8; }
+.metric { font-size: 29px; font-weight: 700; font-variant-numeric: tabular-nums; color: #e8e8ef; text-align: right; }
+.metric small { font-size: 21px; color: #9a9aa8; font-weight: 500; }
+.delta-up { color: #24c26b; } .delta-down { color: #ff5a5a; } .delta-flat { color: #8a8a98; }
+
+/* 푸터 */
+.footer { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; }
+.brand { font-size: 28px; font-weight: 800; letter-spacing: 2px; color: #fff; }
+.brand span { color: #e10600; }
+.note { font-size: 22px; color: #7d7d8c; }
+
+/* 팀 컬러 */
+.t-red_bull { --team: #3671C6; } .t-ferrari { --team: #E8002D; }
+.t-mercedes { --team: #27F4D2; } .t-mclaren { --team: #FF8000; }
+.t-aston_martin { --team: #229971; } .t-alpine { --team: #FF87BC; }
+.t-williams { --team: #64C4FF; } .t-rb, .t-racing_bulls { --team: #6692FF; }
+.t-sauber, .t-audi { --team: #52E252; } .t-haas { --team: #B6BABD; }
+.t-cadillac { --team: #D4AF37; } .t-default { --team: #888; }
+</style>
+<div class="bg" style="background-image:url('')"></div>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">Qualifying · Round 11</div>
+  <div class="title">Hungarian Grand Prix 퀄리파잉</div>
+  <div class="subtitle">Q3 Top 10</div>
+  <div class="rows"><div class="row p1 t-mclaren"><div class="pos">1</div><div class="teambar"></div><div class="drv"><div class="name">Lando Norris</div><div class="team">McLaren</div></div><div class="metric">1:17.207</div></div><div class="row t-ferrari"><div class="pos">2</div><div class="teambar"></div><div class="drv"><div class="name">Lewis Hamilton</div><div class="team">Ferrari</div></div><div class="metric">1:17.219</div></div><div class="row t-ferrari"><div class="pos">3</div><div class="teambar"></div><div class="drv"><div class="name">Charles Leclerc</div><div class="team">Ferrari</div></div><div class="metric">1:17.445</div></div><div class="row t-mercedes"><div class="pos">4</div><div class="teambar"></div><div class="drv"><div class="name">Andrea Kimi Antonelli</div><div class="team">Mercedes</div></div><div class="metric">1:17.479</div></div><div class="row t-mclaren"><div class="pos">5</div><div class="teambar"></div><div class="drv"><div class="name">Oscar Piastri</div><div class="team">McLaren</div></div><div class="metric">1:17.684</div></div><div class="row t-red_bull"><div class="pos">6</div><div class="teambar"></div><div class="drv"><div class="name">Max Verstappen</div><div class="team">Red Bull</div></div><div class="metric">1:17.725</div></div><div class="row t-mercedes"><div class="pos">7</div><div class="teambar"></div><div class="drv"><div class="name">George Russell</div><div class="team">Mercedes</div></div><div class="metric">1:17.760</div></div><div class="row t-red_bull"><div class="pos">8</div><div class="teambar"></div><div class="drv"><div class="name">Isack Hadjar</div><div class="team">Red Bull</div></div><div class="metric">1:17.856</div></div><div class="row t-rb"><div class="pos">9</div><div class="teambar"></div><div class="drv"><div class="name">Arvid Lindblad</div><div class="team">RB F1 Team</div></div><div class="metric">1:18.281</div></div><div class="row t-audi"><div class="pos">10</div><div class="teambar"></div><div class="drv"><div class="name">Nico Hülkenberg</div><div class="team">Audi</div></div><div class="metric">1:18.686</div></div></div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">공식 결과 · 2026-07-26</div>
+  </div>
+</div>

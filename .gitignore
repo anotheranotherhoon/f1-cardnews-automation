@@ -1,0 +1,22 @@
+# 로컬 렌더 결과물
+.render-out/
+
+# 시크릿 · 인스턴스별 설정
+.env
+workflows/config.js
+.claude/settings.local.json
+
+# 생성물 — build-wf*.js 로 만든다 (workflows/config.js 값이 박히므로 커밋하지 않는다)
+workflows/wf1-main-scheduler.json
+workflows/wf2-card-renderer.json
+workflows/wf3-approval-loop.json
+workflows/wf4-publisher.json
+workflows/wf5-asset-gen.json
+workflows/wf6-meme-story.json
+workflows/wf7-telegram-listener.json
+workflows/wf-err-alert.json
+
+# 로컬 환경
+.DS_Store
+.idea/
+__pycache__/

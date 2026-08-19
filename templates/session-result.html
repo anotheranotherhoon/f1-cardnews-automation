@@ -1,0 +1,17 @@
+<!-- session-result: FP/퀄리/스프린트/레이스 순위표 공용 템플릿
+     플레이스홀더: {{CSS}} {{BG_URL}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{ROWS_HTML}} {{NOTE}} {{DATE}}
+     ROWS_HTML 행 형식은 렌더러(Code 노드)가 생성 -->
+<meta charset="utf-8">
+<style>{{CSS}}</style>
+<div class="bg" style="background-image:url('{{BG_URL}}')"></div>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="rows">{{ROWS_HTML}}</div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

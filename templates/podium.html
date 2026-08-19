@@ -1,0 +1,40 @@
+<!-- podium: 포디움 3인 (프리뷰의 작년 포디움 / 작년 스프린트 포디움)
+     {{CSS}} {{BG_URL}} {{KICKER}} {{TITLE}} {{SUBTITLE}}
+     {{P1_NAME}} {{P1_TEAM}} {{P1_CLASS}} / P2 / P3 {{NOTE}} {{DATE}} -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.podium { flex: 1; display: flex; align-items: flex-end; justify-content: center; gap: 28px; margin-top: 30px; padding-bottom: 30px; }
+.step { display: flex; flex-direction: column; align-items: center; width: 280px; }
+.medal { font-size: 40px; font-weight: 900; font-style: italic; color: #fff; margin-bottom: 14px; }
+.p-name { font-size: 34px; font-weight: 800; text-align: center; line-height: 1.2; word-break: keep-all; }
+.p-team { font-size: 23px; color: #9a9aa8; margin-top: 6px; }
+.block { width: 100%; margin-top: 22px; border-radius: 16px 16px 0 0; background: linear-gradient(180deg, var(--team, #555), rgba(255,255,255,0.06) 90%); }
+.step.s1 .block { height: 300px; } .step.s2 .block { height: 210px; } .step.s3 .block { height: 150px; }
+.step.s1 .medal { font-size: 56px; color: #ffd76a; }
+</style>
+<div class="bg" style="background-image:url('{{BG_URL}}')"></div>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="podium">
+    <div class="step s2 {{P2_CLASS}}">
+      <div class="medal">2</div><div class="p-name">{{P2_NAME}}</div><div class="p-team">{{P2_TEAM}}</div>
+      <div class="block"></div>
+    </div>
+    <div class="step s1 {{P1_CLASS}}">
+      <div class="medal">1</div><div class="p-name">{{P1_NAME}}</div><div class="p-team">{{P1_TEAM}}</div>
+      <div class="block"></div>
+    </div>
+    <div class="step s3 {{P3_CLASS}}">
+      <div class="medal">3</div><div class="p-name">{{P3_NAME}}</div><div class="p-team">{{P3_TEAM}}</div>
+      <div class="block"></div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

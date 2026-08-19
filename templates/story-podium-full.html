@@ -1,0 +1,67 @@
+<!-- story-podium-full: 포디움 스토리 (1080×1920) — 풀블리드 변형
+     그림이 화면 전체를 채우고, 순위 패널이 하단에 떠 있는 구조.
+     {{CSS}} {{BG_URL}} {{KICKER}} {{GP_NAME}} {{SUBTITLE}} {{ROWS_HTML}} {{CTA}} -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+html, body { width: 1080px; height: 1920px; }
+.sp-bg { position: absolute; inset: 0;
+         background-size: cover; background-position: center top; }
+.sp-grad { position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(11,11,20,0.82) 0%, rgba(11,11,20,0.22) 13%,
+                              rgba(11,11,20,0) 30%, rgba(11,11,20,0.35) 52%,
+                              rgba(11,11,20,0.88) 66%, rgba(11,11,20,0.97) 76%, #0b0b14 100%); }
+.sp-frame { position: relative; z-index: 2; height: 100%; padding: 96px 72px 120px;
+            display: flex; flex-direction: column; }
+
+/* 헤더 */
+.sp-head { text-align: center; }
+.sp-kicker { font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #ff2d24;
+             text-transform: uppercase; text-shadow: 0 2px 14px rgba(0,0,0,0.95); }
+.sp-gp { font-size: 76px; font-weight: 900; line-height: 1.1; margin-top: 16px;
+         word-break: keep-all; text-shadow: 0 4px 26px rgba(0,0,0,0.85); }
+.sp-sub { font-size: 34px; font-weight: 600; color: #d8d8e2; margin-top: 14px;
+          text-shadow: 0 2px 16px rgba(0,0,0,0.8); }
+
+/* 포디움 결과 */
+.sp-result { margin-top: auto; }
+.sp-label { font-size: 30px; font-weight: 800; letter-spacing: 5px; color: #a8a8b6;
+            text-transform: uppercase; margin-bottom: 22px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.9); }
+.sp-row { display: flex; align-items: center; gap: 24px; padding: 20px 28px;
+          background: rgba(20,20,32,0.72); border-radius: 20px; margin-bottom: 14px;
+          backdrop-filter: blur(6px); }
+.sp-row.p1 { background: rgba(150,4,0,0.62); outline: 3px solid rgba(255,45,36,0.75); }
+.sp-pos { width: 88px; font-size: 58px; font-weight: 900; font-style: italic; text-align: center; }
+.sp-row.p1 .sp-pos { color: #ffd76a; }
+.sp-bar { width: 11px; height: 68px; border-radius: 6px; background: var(--team, #666); }
+.sp-who { flex: 1; min-width: 0; }
+.sp-name { font-size: 44px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp-team { font-size: 26px; color: #a8a8b6; margin-top: 4px; }
+.sp-gap { font-size: 31px; font-weight: 700; color: #d4d4de; font-variant-numeric: tabular-nums; }
+
+/* 푸터 */
+.sp-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 34px; }
+.sp-cta { display: inline-flex; align-items: center; gap: 14px;
+          background: rgba(225,6,0,0.94); border-radius: 999px; padding: 22px 40px;
+          font-size: 34px; font-weight: 800; }
+.sp-brand { font-size: 34px; font-weight: 800; letter-spacing: 2px; }
+.sp-brand span { color: #e10600; }
+</style>
+<div class="sp-bg" style="background-image:url('{{BG_URL}}')"></div>
+<div class="sp-grad"></div>
+<div class="sp-frame">
+  <div class="sp-head">
+    <div class="sp-kicker">{{KICKER}}</div>
+    <div class="sp-gp">{{GP_NAME}}</div>
+    <div class="sp-sub">{{SUBTITLE}}</div>
+  </div>
+  <div class="sp-result">
+    <div class="sp-label">Podium</div>
+    {{ROWS_HTML}}
+    <div class="sp-foot">
+      <div class="sp-cta">{{CTA}}</div>
+      <div class="sp-brand">hooni<span>.speed</span></div>
+    </div>
+  </div>
+</div>

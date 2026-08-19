@@ -1,0 +1,36 @@
+<!-- stints: 드라이버별 타이어 전략 바 차트 (총정리)
+     {{CSS}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{ROWS_HTML}} {{TOTAL_LAPS}} {{NOTE}} {{DATE}}
+     행: <div class="st-row"><div class="st-drv">1 VER</div><div class="st-bar">
+           <div class="seg c-soft" style="width:32%">S 1-18</div><div class="seg c-hard" style="width:68%">H 19-57</div>
+         </div></div> -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.st { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 22px; margin-top: 44px; }
+.st-row { display: flex; align-items: center; gap: 20px; }
+.st-drv { width: 150px; font-size: 30px; font-weight: 800; font-style: italic; }
+.st-bar { flex: 1; display: flex; height: 66px; border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.05); }
+.seg { display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #111; white-space: nowrap; overflow: hidden; }
+.c-soft { background: #ff4b4b; } .c-medium { background: #ffd23e; } .c-hard { background: #e8e8ef; }
+.c-intermediate { background: #43c96a; } .c-wet { background: #4b8bff; color: #fff; } .c-unknown { background: #888; }
+.legend { display: flex; gap: 26px; margin-top: 34px; font-size: 24px; color: #b9b9c6; }
+.legend .dot { display: inline-block; width: 20px; height: 20px; border-radius: 50%; margin-right: 8px; vertical-align: -2px; }
+</style>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="st">{{ROWS_HTML}}</div>
+  <div class="legend">
+    <span><span class="dot c-soft"></span>소프트</span>
+    <span><span class="dot c-medium"></span>미디엄</span>
+    <span><span class="dot c-hard"></span>하드</span>
+    <span><span class="dot c-intermediate"></span>인터</span>
+    <span><span class="dot c-wet"></span>웻</span>
+  </div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

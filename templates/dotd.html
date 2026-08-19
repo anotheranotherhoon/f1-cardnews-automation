@@ -1,0 +1,34 @@
+<!-- dotd: Driver of the Day — 드라이버 액션 이미지 + 선정 이유
+     {{CSS}} {{KICKER}} {{TITLE}} {{DRIVER}} {{TEAM}} {{BODY}} {{IMG_URL}} {{NOTE}} {{DATE}}
+     IMG_URL이 비면 이미지 패널을 숨기고 본문이 전체 폭을 쓴다 (.dotd.noimg) -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.dotd { flex: 1; display: flex; gap: 30px; margin-top: 34px; align-items: stretch; }
+.dotd-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.dotd-name { font-size: 62px; font-weight: 900; line-height: 1.1; word-break: keep-all; }
+.dotd-team { font-size: 27px; color: #9a9aa8; margin-top: 10px; }
+.dotd-rule { width: 84px; height: 6px; border-radius: 3px; background: #e10600; margin: 26px 0; }
+.dotd-body { font-size: 30px; line-height: 1.62; color: #dcdce4; word-break: keep-all; }
+.dotd-img { width: 430px; flex: none; border-radius: 22px; overflow: hidden;
+            background: #12121c center/cover no-repeat; }
+.dotd.noimg .dotd-img { display: none; }
+</style>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="dotd {{NOIMG}}">
+    <div class="dotd-txt">
+      <div class="dotd-name">{{DRIVER}}</div>
+      <div class="dotd-team">{{TEAM}}</div>
+      <div class="dotd-rule"></div>
+      <div class="dotd-body">{{BODY}}</div>
+    </div>
+    <div class="dotd-img" style="background-image:url('{{IMG_URL}}')"></div>
+  </div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>
