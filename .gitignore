@@ -16,6 +16,9 @@ workflows/wf6-meme-story.json
 workflows/wf7-telegram-listener.json
 workflows/wf-err-alert.json
 
+# 개인 문서 (공개 저장소에 올리지 않는다)
+INTERVIEW-PREP.md
+
 # 로컬 환경
 .DS_Store
 .idea/
