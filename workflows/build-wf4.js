@@ -1,7 +1,10 @@
 // WF-4 publisher 생성기: node build-wf4.js > wf4-publisher.json
 // 입력(Execute Workflow): {urls: [...], caption, dirName}
 // 기존 carousel_feed.json의 발행 구간 이관 — 토큰은 httpQueryAuth 자격증명(config.js 의 IG_CRED) 참조
-const { IG_USER_ID, TG_CHAT_ID, TG_CRED, IG_CRED } = require('./config');
+const { IG_USER_ID, TG_CHAT_ID, TG_CRED, IG_CRED, N8N_WEBHOOK_BASE, REPUBLISH_PATH, REPUBLISH_KEY } = require('./config');
+
+// 발행 완료 알림의 "다시 만들기" 버튼이 호출하는 WF-1 재요청 웹훅
+const REPUBLISH_URL = N8N_WEBHOOK_BASE + 'webhook/' + REPUBLISH_PATH + '?k=' + REPUBLISH_KEY;
 
 const nodes = [];
 const connections = {};
@@ -132,7 +135,33 @@ n(
 n(
   'Cleanup Cards',
   'code',
-  { jsCode: "const fs = require('fs');\nconst base = $('Collect Children').first().json.baseDirName;\nif (base) {\n  for (const d of fs.readdirSync('/data/cards')) {\n    if (d === base || d.startsWith(base + '-rev')) fs.rmSync('/data/cards/' + d, { recursive: true, force: true });\n  }\n}\nreturn $input.all();" },
+  {
+    jsCode: [
+      "const fs = require('fs');",
+      "const p = $('Collect Children').first().json;",
+      '// Collect Children 은 {children, caption, dirName, baseDirName} 만 넘긴다.',
+      '// dayType·round·season·raceName 은 워크플로 입력에서 직접 가져와야 한다 (재요청에 필요).',
+      "const src = $('When Executed by Another Workflow').first().json;",
+      'const base = p.baseDirName;',
+      'if (base) {',
+      "  for (const d of fs.readdirSync('/data/cards')) {",
+      "    if (d === base || d.startsWith(base + '-rev')) fs.rmSync('/data/cards/' + d, { recursive: true, force: true });",
+      '  }',
+      '}',
+      '// 재요청 버튼이 "무엇을 다시 만들지" 알 수 있도록 발행 회차를 남긴다.',
+      '// 카드 파일은 위에서 지워지므로 이 기록 없이는 재발행 대상을 특정할 수 없다.',
+      '// 여기는 발행 성공 + 카드 삭제 이후다. 기록이 불완전해도 throw 하지 않는다 —',
+      '// 성공한 발행이 실패 알림으로 뒤바뀐다. 대신 누락 사실을 기록에 남긴다.',
+      'try {',
+      "  fs.writeFileSync('/data/hooni_speed/last-publish.json', JSON.stringify({",
+      '    dayType: src.dayType || null, round: src.round || null, season: src.season || null,',
+      '    raceName: src.raceName || null, dirName: p.dirName, publishedAt: new Date().toISOString(),',
+      '    inputKeys: (!src.dayType || !src.round) ? Object.keys(src) : undefined,',
+      '  }, null, 1));',
+      '} catch (e) {}',
+      'return $input.all();',
+    ].join('\n'),
+  },
   [1760, -100],
   2
 );
@@ -141,7 +170,19 @@ n(
   'telegram',
   {
     chatId: TG_CHAT_ID,
-    text: "=✅ 인스타그램 발행 완료!\n피드 게시물: {{ $('Publish').first().json.id }}\n스토리: {{ $('When Executed by Another Workflow').first().json.storyUrl ? '발행됨' : '없음' }}\n카드 파일은 정리했습니다.",
+    text: "=✅ 인스타그램 발행 완료!\n\n🆔 {{ $('When Executed by Another Workflow').first().json.dirName }}  ·  {{ $('When Executed by Another Workflow').first().json.raceName }}\n피드 게시물: {{ $('Publish').first().json.id }}\n스토리: {{ $('When Executed by Another Workflow').first().json.storyUrl ? '발행됨' : '없음' }}\n카드 파일은 정리했습니다.\n\n잘못 발행했다면 아래 버튼으로 같은 회차를 다시 만들 수 있습니다.\n처음처럼 승인 요청이 다시 옵니다 (12분 정도 소요).\n⚠️ 이미 올라간 게시물은 API로 지울 수 없어 인스타 앱에서 직접 삭제해주세요.",
+    replyMarkup: 'inlineKeyboard',
+    inlineKeyboard: {
+      rows: [
+        {
+          row: {
+            buttons: [
+              { text: '🔄 다시 만들기', additionalFields: { url: REPUBLISH_URL } },
+            ],
+          },
+        },
+      ],
+    },
     additionalFields: {},
   },
   [1980, -100],
@@ -153,7 +194,7 @@ n(
   'telegram',
   {
     chatId: TG_CHAT_ID,
-    text: "=❌ 인스타그램 발행 실패\n오류: {{ $json.error ? ($json.error.message || JSON.stringify($json.error)) : '알 수 없음' }}\n카드 파일은 보존했습니다 — n8n에서 수동 재시도 가능합니다.",
+    text: "=❌ 인스타그램 발행 실패\n\n🆔 {{ $('When Executed by Another Workflow').first().json.dirName }}  ·  {{ $('When Executed by Another Workflow').first().json.raceName }}\n오류: {{ $json.error ? ($json.error.message || JSON.stringify($json.error)) : '알 수 없음' }}\n카드 파일은 보존했습니다 — n8n에서 수동 재시도 가능합니다.",
     additionalFields: {},
   },
   [1760, 140],

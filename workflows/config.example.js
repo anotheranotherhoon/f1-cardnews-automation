@@ -13,6 +13,12 @@ module.exports = {
   // WF-5 에셋 생성 웹훅 경로. 외부에서 호출 가능하므로 추측하기 어려운 값을 쓴다
   ASSET_GEN_PATH: 'asset-gen-<임의문자열>',
 
+  // 재요청(발행 후 다시 만들기) 버튼용. n8n 공개 웹훅 주소 + 경로 + 인증 키.
+  // 버튼 URL 이 텔레그램 대화에 남으므로 KEY 는 반드시 추측 불가능한 값으로 둔다.
+  N8N_WEBHOOK_BASE: 'https://<n8n 공개주소>/',
+  REPUBLISH_PATH: 'republish-<임의문자열>',
+  REPUBLISH_KEY: '<임의문자열>',
+
   // n8n Credentials 에 등록한 항목들의 id/name (실제 키는 n8n 안에만 있다)
   TG_CRED: { id: '<n8n telegram credential id>', name: 'Telegram account' },
   IG_CRED: { id: '<n8n ig token credential id>', name: 'Instagram access token' },

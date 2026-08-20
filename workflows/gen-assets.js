@@ -40,43 +40,8 @@ const STYLE_GUIDE =
 
 // v2 화풍 (2026-08-16 피드백: 의상 디테일 강화 + 조금 더 현실적으로)
 // 화풍(공용) / 구도·배경(용도별)을 분리한다 — DOTD는 상반신+어두운 배경이라 전신·흰배경 규정과 충돌한다
-const STYLE_CORE =
-  'MEDIUM: a HAND-DRAWN ILLUSTRATION with visible clean linework and painted cel shading — ' +
-  'NEVER a photograph, never photo-realistic skin texture, never a photo face pasted onto a drawn body. ' +
-  'LIKENESS: reproduce the real person\'s bone structure, hairstyle, eye shape, nose, mouth, facial hair and ' +
-  'skin tone faithfully, then exaggerate the most distinctive traits only slightly (about 15%). ' +
-  'RENDERING: refined semi-realistic illustration, soft three-tone cel shading with subtle gradients, ' +
-  'gentle rim light, restrained thin clean outlines, controlled rich color. ' +
-  'RACING SUIT — DETAILED BUT COMPLETELY BLANK: draw a fitted modern FIA racing coverall showing its ' +
-  'construction: panel seams, shoulder and elbow articulation, raised collar, zip flap, waist belt, padded knees, ' +
-  'ribbed cuffs, matching gloves with knuckle panels, subtle fabric sheen and folds, plain racing boots. ' +
-  'CRITICAL BRANDING RULE: this is an UNSPONSORED PLAIN TEST SUIT. Do NOT reproduce any real Formula 1 team livery. ' +
-  'There must be ZERO logos, ZERO sponsor patches, ZERO brand marks, ZERO emblems, ZERO shields, ZERO badges, ' +
-  'ZERO lettering, ZERO numbers and ZERO flags anywhere on the suit, gloves, boots or helmet. ' +
-  'The SHOULDERS and CHEST must stay completely bare of any mark — no chevrons, no arrows, no winged shapes, ' +
-  'no star or bird motifs, and above all NO leaping cat or animal silhouette of any kind on the chest or ' +
-  'shoulders. Do not invent decorative emblems to fill empty space. ' +
-  'CHEST DESIGN (fills the space so there is no empty panel): across the chest draw ONE bold diagonal stripe of ' +
-  'the accent colour running from the left shoulder down to the right hip, plus a matching thinner stripe along ' +
-  'each outer sleeve. These stripes are the ONLY decoration — they replace any logo. The chest must have no ' +
-  'other shape on it whatsoever. ' +
-  'Use only flat solid colour blocking and seam lines to shape the suit. The helmet is plain matte white, unmarked. ' +
-  'NO artist signature, NO watermark, NO handwriting, NO scribble in any corner of the image.';
-
-const STYLE_V2 =
-  'PROPORTIONS (strict, identical for every character): total body height = exactly 4 head-heights. ' +
-  'The head is enlarged for caricature but the body has real human structure and correct anatomy. ' +
-  'Full figure standing upright, head-to-toe, same camera distance and same scale for every character. ' +
-  STYLE_CORE +
-  ' BACKGROUND: plain pure white, no shadow ground, no props, no text anywhere in the image.';
-
-// DOTD 카드용: 표정이 읽혀야 하므로 전신이 아니라 상반신으로 고정한다
-const STYLE_V2_BUST =
-  'FRAMING (strict, non-negotiable, identical for every character): a CHEST-UP PORTRAIT. The bottom edge of ' +
-  'the image cuts the body just below the chest. Legs, hips, knees and boots are OUTSIDE the frame and must ' +
-  'never appear. The head occupies about one third of the image height so the facial expression reads clearly. ' +
-  'This is a tight portrait crop, NOT a full-body figure. The head is enlarged for caricature but anatomy stays correct. ' +
-  STYLE_CORE;
+// 화풍은 style.js 가 단일 출처다 (build-wf1.js 의 즉석 자산 생성도 같은 값을 쓴다).
+const { STYLE_CORE, STYLE_V2, STYLE_V2_BUST } = require('./style');
 
 // 드라이버 식별자: 팀 컬러 + 캐리커처로 과장할 개인 특징
 const DRIVERS = {

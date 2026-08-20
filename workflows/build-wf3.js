@@ -33,7 +33,10 @@ n(
     jsCode: [
       "const p = $input.first().json;",
       "const review = new Set(p.needsReview || []);",
-      "const items = p.urls.map((u, i) => ({ json: { photoUrl: u + '?v=' + p.revision, caption: '카드 ' + (i + 1) + '/' + p.urls.length + (review.has(i + 1) ? ' ⚠️ 검수 필요(LLM 생성)' : '') } }));",
+      "// empty 는 본문이 실제로 빈 카드다. review(LLM 사용 선언)는 상시 켜지므로 구분해서 표시한다.",
+      "const empty = new Set(p.emptyCards || []);",
+      "const mark = (i) => (empty.has(i) ? ' 🛑 본문 없음 — 이대로 발행하면 빈 카드가 올라갑니다' : review.has(i) ? ' ⚠️ 검수 필요(LLM 생성)' : '');",
+      "const items = p.urls.map((u, i) => ({ json: { photoUrl: u + '?v=' + p.revision, caption: '카드 ' + (i + 1) + '/' + p.urls.length + mark(i + 1) } }));",
       "if (p.storyUrl) items.push({ json: { photoUrl: p.storyUrl + '?v=' + p.revision, caption: '📱 인스타 스토리 (9:16)' } });",
       "return items;",
     ].join('\n'),
@@ -101,12 +104,15 @@ n(
   'telegram',
   {
     chatId: TG_CHAT_ID,
-    text: "=📋 카드 {{ $json.cardCount }}장 확인해주세요 (수정 {{ $json.revision }}회차)\n\n🆔 {{ $json.dirName }}  ·  {{ new Date(Date.now() + 9*3600000).toISOString().slice(5,16).replace('T',' ') }} 생성\n\n• 그대로 발행 → 아래 버튼\n• 수정하려면 → 이 채팅에 수정 내용을 그대로 입력\n  예) 1번 제목을 '노리스 폴!'로 바꿔줘\n\n⏳ 24시간 내 응답이 없으면 자동 만료됩니다.",
+    text: "=📋 카드 {{ $json.cardCount }}장 확인해주세요 (수정 {{ $json.revision }}회차)\n\n🆔 {{ $json.dirName }}  ·  {{ new Date(Date.now() + 9*3600000).toISOString().slice(5,16).replace('T',' ') }} 생성\n{{ ($json.emptyCards && $json.emptyCards.length) ? '\\n🛑 본문이 빈 카드: ' + $json.emptyCards.join(', ') + '번 — 발행 전 확인하세요.\\n' : '' }}\n• 그대로 발행 / 취소 → 아래 버튼\n• 수정하려면 → 이 채팅에 수정 내용을 그대로 입력\n  예) 1번 제목을 '노리스 폴!'로 바꿔줘\n\n⏳ 24시간 내 응답이 없으면 자동 만료됩니다.",
     replyMarkup: 'inlineKeyboard',
     inlineKeyboard: {
       rows: [
         { row: { buttons: [{ text: '✏️ 편집하기', additionalFields: { url: "={{ $('Arm Chat Reply').first().json.editUrl }}" } }] } },
         { row: { buttons: [{ text: '✅ 그대로 발행', additionalFields: { url: "={{ $('Arm Chat Reply').first().json.resumeUrl }}&text=%EB%B0%9C%ED%96%89" } }] } },
+        // 취소는 채팅에 '취소'를 입력해야만 가능했다. 발행 버튼과 다른 줄에 둬 오탭을 막는다.
+        // %EC%B7%A8%EC%86%8C = '취소' (Route Reply 의 isCancel 정규식이 받는다)
+        { row: { buttons: [{ text: '🚫 이번 발행 취소', additionalFields: { url: "={{ $('Arm Chat Reply').first().json.resumeUrl }}&text=%EC%B7%A8%EC%86%8C" } }] } },
       ],
     },
     additionalFields: {},
@@ -162,7 +168,8 @@ n(
 n(
   'Notify Publishing',
   'telegram',
-  { chatId: TG_CHAT_ID, text: '✅ 발행 승인됐습니다. 인스타그램에 올리는 중…', additionalFields: {} },
+  // 후속 알림에는 반드시 🆔 를 붙인다 — 승인 요청이 여러 건 쌓이면 어느 건에 대한 응답인지 알 수 없다.
+  { chatId: TG_CHAT_ID, text: "=✅ 발행 승인됐습니다. 인스타그램에 올리는 중…\n\n🆔 {{ $json.dirName }}  ·  {{ $json.raceName }}", additionalFields: {} },
   [1820, -260],
   1.2,
   { credentials: { telegramApi: TG_CRED }, webhookId: 'a3000006-notify-pub-000-000000000000' }
@@ -267,7 +274,14 @@ n(
 n(
   'Notify Expired',
   'telegram',
-  { chatId: TG_CHAT_ID, text: "=⏳ 승인 없이 만료되어 이번 발행은 취소했습니다. (카드 파일 {{ $json.removedDirs }}개 정리)\n다음 발행은 예정대로 진행됩니다.", additionalFields: {} },
+  // 취소(Switch 출력 1)와 만료(출력 3)가 같은 노드로 들어온다 — decision 으로 문구를 구분한다.
+  {
+    chatId: TG_CHAT_ID,
+    text:
+      "={{ $json.decision === 'cancel' ? '🚫 요청하신 대로 이번 발행을 취소했습니다.' : '⏳ 승인 없이 24시간이 지나 이번 발행을 취소했습니다.' }}" +
+      ' (카드 파일 {{ $json.removedDirs }}개 정리)\n다음 발행은 예정대로 진행됩니다.\n\n🆔 {{ $json.dirName }}  ·  {{ $json.raceName }}',
+    additionalFields: {},
+  },
   [2040, 0],
   1.2,
   { credentials: { telegramApi: TG_CRED }, webhookId: 'a3000005-notify-exp-000-000000000000' }
@@ -289,7 +303,7 @@ n(
 n(
   'Notify Max',
   'telegram',
-  { chatId: TG_CHAT_ID, text: '⛔ 수정 3회를 초과했습니다. 이번 발행은 수동 처리로 전환합니다.', additionalFields: {} },
+  { chatId: TG_CHAT_ID, text: "=⛔ 수정 3회를 초과했습니다. 이번 발행은 수동 처리로 전환합니다.\n\n🆔 {{ $json.dirName }}  ·  {{ $json.raceName }}", additionalFields: {} },
   [2040, 320],
   1.2,
   { credentials: { telegramApi: TG_CRED }, webhookId: 'a3000004-notify-max-000-000000000000' }
