@@ -3,7 +3,10 @@
 // 흐름: 카드 전송 → 안내 메시지 → Wait(웹훅 재개) → WF-7이 채팅 답장을 넣어줌
 //       → "발행"이면 승인 / 그 외 텍스트는 수정 지시로 해석 → Gemini가 카드 수정 → WF-2 재렌더 → 반복
 // 링크를 열 필요가 없다 (사용자가 카드를 보면서 채팅에 바로 입력).
-const { TG_CHAT_ID, TG_CRED, GEMINI_CRED } = require('./config');
+const { TG_CHAT_ID, TG_CRED, GEMINI_CRED, N8N_WEBHOOK_BASE, FORM_PATH } = require('./config');
+
+// 편집 페이지가 폼을 POST 하는 곳 (WF-7). 대기 웹훅은 GET 만 받으므로 직접 호출할 수 없다.
+const FORM_URL = N8N_WEBHOOK_BASE + 'webhook/' + FORM_PATH;
 const WF2_ID = 'HooniWF2Rndr0001';
 const PENDING = '/data/hooni_speed/pending-approval.json';
 
@@ -80,6 +83,8 @@ n(
       "  dayLabel: DAY[p.dayType] || '', revision: p.revision,",
       "  createdKst: new Date(Date.now() + 9 * 3600000).toISOString().slice(5, 16).replace('T', ' '),",
       "  resumeUrl: $execution.resumeUrl,",
+      "  // 폼은 대기 웹훅(GET 전용)이 아니라 WF-7 의 POST 창구로 보낸다",
+      "  formUrl: " + JSON.stringify(FORM_URL) + ",",
       "  cards: (p.cards || []).map((c, i) => ({",
       "    type: c.type, template: c.template, data: c.data || {},",
       "    image: CDN + p.dirName + '/card-' + (i + 1) + '-' + c.type + '.png?v=' + p.revision,",
@@ -133,8 +138,13 @@ n(
       "const j = $input.first().json || {};",
       "const text = String((j.query && j.query.text) || (j.body && j.body.text) || j.text || '').trim();",
       "try { fs.unlinkSync('" + PENDING + "'); } catch (e) {}",
-      "// 편집 페이지는 JSON을 POST한다 — 텍스트 파싱 이전에 먼저 판별한다",
-      "const form = (j.body && j.body.action) ? j.body : null;",
+      "// 편집 페이지 폼은 WF-7 이 form.json 으로 넘긴다 (대기 웹훅이 GET 만 받으므로 우회).",
+      "// j.body 경로는 과거 POST 직접 호출용이며, 지금은 도달하지 않지만 호환을 위해 남긴다.",
+      "let form = (j.body && j.body.action) ? j.body : null;",
+      "if (!form && text === 'form') {",
+      "  try { form = JSON.parse(fs.readFileSync('/data/cards/' + p.dirName + '/form.json', 'utf8')); } catch (e) { form = null; }",
+      "  if (!form) throw new Error('폼 파일을 읽지 못했다: /data/cards/' + p.dirName + '/form.json');",
+      "}",
       "if (form) {",
       "  return [{ json: { ...p, form, decision: form.action === 'publish' ? 'form-publish' : 'form-revise' } }];",
       "}",

@@ -1,7 +1,11 @@
 // WF-7 telegram-listener: node build-wf7.js > wf7-telegram-listener.json
-// 텔레그램 채팅 답장을 받아 대기 중인 WF-3 실행을 재개시킨다.
-// (링크를 열지 않고 채팅에 바로 입력할 수 있게 하는 다리 역할)
-const { TG_CHAT_ID, TG_CRED } = require('./config');
+// 외부 입력(텔레그램 채팅 / 편집 페이지 폼)을 받아 대기 중인 WF-3 실행을 재개시키는 다리.
+//
+// 왜 다리가 필요한가: WF-3 의 대기 웹훅은 GET 만 받는다. 텔레그램 인라인 버튼이 GET 밖에
+// 못 보내기 때문에 그쪽을 POST 로 바꿀 수 없다. 반면 편집 페이지는 카드 전체 데이터를
+// 보내야 해서 URL 쿼리에 담을 수 없다. 그래서 폼은 여기로 POST 하고, 여기서 파일로
+// 저장한 뒤 GET 으로 재개시킨다.
+const { TG_CHAT_ID, TG_CRED, FORM_PATH } = require('./config');
 const PENDING = '/data/hooni_speed/pending-approval.json';
 
 const nodes = [];
@@ -91,11 +95,63 @@ n(
   { credentials: { telegramApi: TG_CRED }, webhookId: 'a7000002-no-pending-000-000000000000' }
 );
 
+// ---------- 편집 페이지 폼 경로 ----------
+// 페이로드가 커서(카드 전체 data) URL 에 실을 수 없다. 파일로 넘긴 뒤 GET 으로 재개한다.
+n(
+  'Form Webhook',
+  'webhook',
+  { httpMethod: 'POST', path: FORM_PATH, responseMode: 'lastNode', options: {} },
+  [0, 320],
+  2,
+  { webhookId: 'a7000004-form-hook-00-000000000000' }
+);
+n(
+  'Save Form',
+  'code',
+  {
+    jsCode: [
+      "const fs = require('fs');",
+      'const body = $input.first().json.body || {};',
+      "if (!body.action || !body.dirName) throw new Error('폼 본문에 action/dirName 이 없다');",
+      "let pending = null;",
+      "try { pending = JSON.parse(fs.readFileSync('" + PENDING + "', 'utf8')); } catch (e) { pending = null; }",
+      "if (!pending || !pending.resumeUrl) throw new Error('대기 중인 승인 요청이 없다');",
+      '// Route Reply 가 이 파일을 읽는다. 폴더명은 폼이 보낸 값을 그대로 쓴다.',
+      "fs.writeFileSync('/data/cards/' + body.dirName + '/form.json', JSON.stringify(body));",
+      'return [{ json: { ok: true, action: body.action, dirName: body.dirName, resumeUrl: pending.resumeUrl } }];',
+    ].join('\n'),
+  },
+  [220, 320],
+  2
+);
+n(
+  'Resume From Form',
+  'httpRequest',
+  {
+    method: 'GET',
+    url: "={{ $json.resumeUrl }}&text=form",
+    options: { timeout: 20000 },
+  },
+  [440, 320],
+  4.2,
+  { retryOnFail: true, maxTries: 2, waitBetweenTries: 3000 }
+);
+n(
+  'Form Accepted',
+  'code',
+  { jsCode: "// 편집 페이지가 이 응답의 상태코드로 성공을 판단한다\nreturn [{ json: { ok: true } }];" },
+  [660, 320],
+  2
+);
+
 c('Telegram Trigger', 'Load Pending');
 c('Load Pending', 'IF Pending');
 c('IF Pending', 'Ack Received', 0);
 c('Ack Received', 'Resume Workflow');
 c('IF Pending', 'Notify No Pending', 1);
+c('Form Webhook', 'Save Form');
+c('Save Form', 'Resume From Form');
+c('Resume From Form', 'Form Accepted');
 
 process.stdout.write(
   JSON.stringify(

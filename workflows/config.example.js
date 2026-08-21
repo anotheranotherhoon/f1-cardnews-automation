@@ -19,6 +19,10 @@ module.exports = {
   REPUBLISH_PATH: 'republish-<임의문자열>',
   REPUBLISH_KEY: '<임의문자열>',
 
+  // 편집 페이지가 폼을 POST 하는 경로 (WF-7).
+  // 텔레그램 대기 웹훅은 GET 만 받으므로 편집 페이지는 여기를 거쳐 재개된다.
+  FORM_PATH: 'edit-form-<임의문자열>',
+
   // n8n Credentials 에 등록한 항목들의 id/name (실제 키는 n8n 안에만 있다)
   TG_CRED: { id: '<n8n telegram credential id>', name: 'Telegram account' },
   IG_CRED: { id: '<n8n ig token credential id>', name: 'Instagram access token' },

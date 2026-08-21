@@ -183,9 +183,19 @@ function submit(action) {
     story: draft.story ? { template: draft.story.template, data: draft.story.data,
       regen: !!draft.story.regen, comment: (draft.story.comment || '').trim() } : null
   };
-  fetch(draft.resumeUrl, {
+  // 이 수정 이전에 만들어진 초안에는 formUrl 이 없다. 그 경우 조용히 실패하지 않고 안내한다.
+  if (!draft.formUrl) {
+    done('⚠️', '이 카드 세트는 편집 페이지로 제출할 수 없습니다',
+      '텔레그램 채팅에 수정 내용을 직접 입력해주세요');
+    return;
+  }
+  // 대기 웹훅은 GET 만 받는다 (텔레그램 버튼이 GET 밖에 못 보내기 때문). 폼은 페이로드가
+  // 커서 URL 에 실을 수 없으므로 WF-7 의 POST 창구로 보내고, 거기서 재개시킨다.
+  // fetch 는 4xx/5xx 에도 reject 하지 않는다 — ok 를 확인하지 않으면 실패가 성공으로 보인다.
+  fetch(draft.formUrl, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-  }).then(function () {
+  }).then(function (r) {
+    if (!r.ok) throw new Error('서버가 요청을 거부했습니다 (HTTP ' + r.status + ')');
     done('✅', action === 'publish' ? '발행 요청 접수' : '수정 요청 접수',
       action === 'publish' ? '인스타그램에 올라갑니다' : '수정된 카드만 다시 만듭니다');
   }).catch(function (e) {
