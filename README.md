@@ -13,9 +13,13 @@ F1 그랑프리 주말의 카드뉴스를 **데이터 수집부터 인스타그�
 </p>
 
 <p align="center">
-  <img src="images/edit-page.png" width="42%" alt="편집 페이지 — 카드별 문구 수정과 이미지 재생성">
-  <br>
-  <sub>편집 페이지 — 카드별로 문구를 고치고 이미지 재생성을 지정한다</sub>
+  <img src="images/telegram-approval.png" width="41%" alt="텔레그램 승인 화면" valign="top">
+  &nbsp;&nbsp;
+  <img src="images/edit-page.png" width="41%" alt="편집 페이지" valign="top">
+</p>
+<p align="center">
+  <sub>왼쪽 — 텔레그램 승인 요청. 본문이 빈 카드는 🛑 로 짚어준다 (2026-08-20에 실제로 발행된 빈 카드)<br>
+  오른쪽 — 편집 페이지. 카드별로 문구를 고치고 이미지 재생성을 지정한다</sub>
 </p>
 
 ---

@@ -109,7 +109,7 @@ n(
   'telegram',
   {
     chatId: TG_CHAT_ID,
-    text: "=📋 카드 {{ $json.cardCount }}장 확인해주세요 (수정 {{ $json.revision }}회차)\n\n🆔 {{ $json.dirName }}  ·  {{ new Date(Date.now() + 9*3600000).toISOString().slice(5,16).replace('T',' ') }} 생성\n{{ ($json.emptyCards && $json.emptyCards.length) ? '\\n🛑 본문이 빈 카드: ' + $json.emptyCards.join(', ') + '번 — 발행 전 확인하세요.\\n' : '' }}\n• 그대로 발행 / 취소 → 아래 버튼\n• 수정하려면 → 이 채팅에 수정 내용을 그대로 입력\n  예) 1번 제목을 '노리스 폴!'로 바꿔줘\n\n⏳ 24시간 내 응답이 없으면 자동 만료됩니다.",
+    text: "=📋 카드 {{ $json.cardCount }}장 확인해주세요 (수정 {{ $json.revision }}회차)\n\n🆔 {{ $json.dirName }}  ·  {{ new Date(Date.now() + 9*3600000).toISOString().slice(5,16).replace('T',' ') }} 생성\n{{ ($json.emptyCards && $json.emptyCards.length) ? '\\n🛑 본문이 빈 카드: ' + $json.emptyCards.join(', ') + '번 — 발행 전 확인하세요.\\n' : '' }}\n• 그대로 발행 / 취소 → 아래 버튼\n• 카드별로 고치려면 → ✏️ 편집하기\n  (간단한 지시는 이 채팅에 그대로 입력해도 됩니다)\n\n⏳ 24시간 내 응답이 없으면 자동 만료됩니다.",
     replyMarkup: 'inlineKeyboard',
     inlineKeyboard: {
       rows: [
