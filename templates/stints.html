@@ -13,6 +13,13 @@
 .seg { display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #111; white-space: nowrap; overflow: hidden; }
 .c-soft { background: #ff4b4b; } .c-medium { background: #ffd23e; } .c-hard { background: #e8e8ef; }
 .c-intermediate { background: #43c96a; } .c-wet { background: #4b8bff; color: #fff; } .c-unknown { background: #888; }
+/* 노출 범위를 카드가 직접 밝힌다 — 없으면 22명 중 일부만 보여주는 게 잘린 것처럼 읽힌다 */
+/* align-self 로 폭을 내용에 맞춘다 — frame 이 flex column 이라 기본은 전체 폭으로 늘어난다 */
+.st-scope {
+  align-self: flex-start; margin-top: 18px; padding: 7px 20px; border-radius: 999px;
+  background: rgba(225,6,0,0.16); border: 2px solid rgba(225,6,0,0.5);
+  font-size: 25px; font-weight: 800; color: #ff6b64;
+}
 .legend { display: flex; gap: 26px; margin-top: 34px; font-size: 24px; color: #b9b9c6; }
 .legend .dot { display: inline-block; width: 20px; height: 20px; border-radius: 50%; margin-right: 8px; vertical-align: -2px; }
 </style>
@@ -21,6 +28,7 @@
   <div class="kicker">{{KICKER}}</div>
   <div class="title">{{TITLE}}</div>
   <div class="subtitle">{{SUBTITLE}}</div>
+  {{SCOPE_HTML}}
   <div class="st">{{ROWS_HTML}}</div>
   <div class="legend">
     <span><span class="dot c-soft"></span>소프트</span>
