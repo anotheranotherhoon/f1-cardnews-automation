@@ -56,28 +56,27 @@ OpenF1   full_name               →  "Kimi ANTONELLI"          (토 FP/SQ)
 ```
 
 여기에 축약기가 템플릿마다 따로 있어서 `K. ANTONELLI` / `A. Kimi Antonelli` 까지 네 갈래로
-갈렸다. **표기는 `build-wf2.js` 의 `famName` / `fullName` / `nameFn` 이 단일 출처다.**
-새 템플릿을 만들면 이름을 직접 출력하지 말고 이 함수를 쓴다.
+갈렸다. **표기는 `build-wf2.js` 의 `fullName` 이 단일 출처다.** 새 템플릿을 만들면 이름을
+직접 출력하지 말고 이 함수를 쓴다 (`esc(fullName(r.name))`).
 
-| 쓰임 | 함수 | 결과 |
+**모든 카드가 이름 전체를 쓴다** — `Lewis Hamilton`, `Kimi Antonelli`. 순위표도 예외가 아니다.
+2열 카드(레이스 결과·순위·그리드)에서 가장 긴 `Gabriel Bortoleto` · `Alexander Albon` 까지
+잘리지 않는 것을 렌더로 확인했다.
+
+출처 차이는 두 표가 흡수한다. **둘 다 '어긋나는 경우만' 등록한다** — 등록이 없으면 받은 값을
+그대로 쓰므로 대체 드라이버가 들어와도 손댈 일이 없다.
+
+| 표 | 문제 | 등록 예 |
 |---|---|---|
-| 순위·타임 카드 (결과·그리드·순위·탈락구간·스틴트) | `nameFn(rows)` | `Antonelli` |
-| 로스터·피처 카드 (라인업·포디움·스토리·DOTD) | `fullName` | `Andrea Kimi Antonelli` |
-| 좁은 자리 (FASTEST LAP 칩) | `famName` | `Antonelli` |
+| `DIACRITIC` | OpenF1 이 특수문자를 ASCII 로 접어서 준다 (`HULKENBERG`) | `hulkenberg: 'Hülkenberg'` |
+| `GIVEN` | 이름(given)이 출처마다 다르다 | `antonelli: 'Kimi'` |
 
-**순위 카드는 성만 쓴다.** 이름(given)은 출처마다 다르지만 성은 일치하므로, 성만이 카드 간
-일관성을 보장한다. F1 중계 타이밍 그래픽과도 같은 방식이다.
+2026-08 두 API 를 코드 기준으로 대조한 결과 **이름이 어긋나는 선수는 안토넬리 한 명**이었다
+(Jolpica `Andrea Kimi` vs OpenF1 `Kimi`). 알본·비어먼 등은 두 출처가 일치한다. 대조는
+`Jolpica /2026/drivers.json` 과 `OpenF1 /v1/drivers?meeting_key=` 를 비교하면 다시 확인할 수 있다.
 
-**성이 겹치면 그 선수들만 이니셜을 붙인다** (`M. Schumacher` / `R. Schumacher`).
-`nameFn` 이 행 목록을 받아 중복을 세고 판단한다 — 이니셜을 항상 붙이면 출처마다 이름이 달라
-`A.` 와 `K.` 로 갈리므로, 겹칠 때만 붙이는 것이 핵심이다.
-
-**OpenF1 은 특수문자를 ASCII 로 접어서 준다** (`HULKENBERG`, `PEREZ`). `DIACRITIC` 표가
-원 표기로 되돌린다 (`Hülkenberg`, `Pérez`). 특수문자가 없는 이름은 등록이 필요 없어서
-대체 드라이버가 들어와도 이 표를 손댈 일이 없다.
-
-**컨스트럭터 순위는 rows 가 팀명이다.** `shortenNames: false` 로 표시하며, 성만 남기면
-`Aston Martin` 이 `Martin` 이 된다.
+**컨스트럭터 순위는 rows 가 팀명이다.** `shortenNames: false` 로 표시한다 — 이름 함수를
+태우면 `Aston Martin` 의 표기가 흔들린다.
 
 ### 순위 카드는 1등부터 꼴등까지 전원을 노출한다
 

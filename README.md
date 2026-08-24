@@ -188,16 +188,16 @@ Research → Parse → 실패? ─예→ Research 2 (temp↑) → Parse → 실�
 
 데이터 출처가 둘이라 같은 선수가 카드마다 다르게 보였다. Jolpica는 `Andrea Kimi Antonelli`, OpenF1은 `Kimi ANTONELLI`를 준다. 여기에 축약기가 템플릿마다 따로 있어 `K. ANTONELLI`, `A. Kimi Antonelli` 까지 **네 갈래**로 갈렸다.
 
-이름(given)은 출처마다 다르지만 **성(family)은 일치한다.** 그래서 순위·타임 카드는 성만 쓴다 — 이것만이 카드 간 일관성을 보장한다. F1 중계 타이밍 그래픽과도 같은 방식이다.
+이름 표기는 함수 하나(`fullName`)로 모았다. 모든 카드가 이름 전체를 쓰고, 출처 차이는 두 표가 흡수한다.
 
-```
-순위·타임 카드    Antonelli
-로스터·피처 카드   Andrea Kimi Antonelli
-```
+| 표 | 문제 | 등록 예 |
+|---|---|---|
+| `DIACRITIC` | OpenF1이 특수문자를 ASCII로 접어서 준다 (`HULKENBERG`) | `hulkenberg: 'Hülkenberg'` |
+| `GIVEN` | 이름(given)이 출처마다 다르다 | `antonelli: 'Kimi'` |
 
-성이 겹치면 **그 선수들만** 이니셜을 붙인다 (`M. Schumacher` / `R. Schumacher`). 항상 붙이면 출처에 따라 `A.`와 `K.`로 갈리므로, 겹칠 때만 붙이는 게 핵심이다.
+**둘 다 어긋나는 경우만 등록한다.** 등록이 없으면 받은 값을 그대로 쓰므로, 대체 드라이버가 들어와도 표를 손댈 일이 없다.
 
-그리고 OpenF1은 특수문자를 ASCII로 접어서 준다 (`HULKENBERG`, `PEREZ`). 원 표기로 되돌리는 표를 뒀다 — 특수문자가 없는 이름은 등록이 필요 없어 대체 드라이버가 와도 손댈 일이 없다.
+그리고 **추측하지 않고 두 API를 실제로 대조했다.** 코드 기준으로 비교한 결과 이름이 어긋나는 선수는 안토넬리 한 명이었다 — 알본(`Alexander`)·비어먼(`Oliver`)은 두 출처가 일치한다. 짐작으로 표를 채웠다면 없는 항목을 넣고 있는 항목을 빠뜨렸을 것이다.
 
 **⑧ 성공 화면을 응답 없이 띄우지 않는다**
 
