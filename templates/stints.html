@@ -6,10 +6,11 @@
 <meta charset="utf-8">
 <style>
 {{CSS}}
-.st { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 22px; margin-top: 44px; }
-.st-row { display: flex; align-items: center; gap: 20px; }
+/* 행 높이는 66px 을 상한으로 남는 공간에 맞춰 줄어든다 — 10행 고정 66px 이면 1350px 을 넘쳐 푸터가 잘린다 */
+.st { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 16px; margin-top: 40px; }
+.st-row { flex: 1 1 0; min-height: 0; max-height: 66px; display: flex; align-items: center; gap: 20px; }
 .st-drv { width: 150px; font-size: 30px; font-weight: 800; font-style: italic; }
-.st-bar { flex: 1; display: flex; height: 66px; border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.05); }
+.st-bar { flex: 1; align-self: stretch; display: flex; border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.05); }
 .seg { display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #111; white-space: nowrap; overflow: hidden; }
 .c-soft { background: #ff4b4b; } .c-medium { background: #ffd23e; } .c-hard { background: #e8e8ef; }
 .c-intermediate { background: #43c96a; } .c-wet { background: #4b8bff; color: #fff; } .c-unknown { background: #888; }
