@@ -1,0 +1,35 @@
+<!-- calendar: 시즌 캘린더 · 라운드별 우승자 (2열 × 최대 12행) — 월 총정리 마지막 카드
+     {{CSS}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{LEFT_ROWS_HTML}} {{RIGHT_ROWS_HTML}} {{NOTE}} {{DATE}}
+     행: <div class="cal-row now t-mercedes"><div class="cal-rnd">R13</div><div class="cal-bar"></div>
+         <div class="cal-gp">Italian</div><div class="cal-win">Antonelli</div></div>
+     미개최 라운드는 .todo 로 흐리게, 우승자 자리에 날짜 -->
+<meta charset="utf-8">
+<style>
+{{CSS}}
+.cal { flex: 1; display: flex; gap: 20px; margin-top: 38px; }
+.calcol { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.cal-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.055);
+           border-radius: 12px; padding: 13px 16px; }
+.cal-row.now { background: rgba(225,6,0,0.22); outline: 2px solid rgba(225,6,0,0.55); }
+.cal-row.todo { opacity: 0.5; }
+.cal-rnd { width: 58px; font-size: 24px; font-weight: 900; font-style: italic; color: #b9b9c6; }
+.cal-bar { width: 7px; height: 40px; border-radius: 4px; background: var(--team, #3a3a48); flex: none; }
+.cal-gp { flex: 1; min-width: 0; font-size: 26px; font-weight: 700;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-win { font-size: 25px; font-weight: 700; color: #e8e8ef; white-space: nowrap; }
+.cal-row.todo .cal-win { color: #9a9aa8; font-weight: 500; font-variant-numeric: tabular-nums; }
+</style>
+<div class="bg-dim"></div>
+<div class="frame">
+  <div class="kicker">{{KICKER}}</div>
+  <div class="title">{{TITLE}}</div>
+  <div class="subtitle">{{SUBTITLE}}</div>
+  <div class="cal">
+    <div class="calcol">{{LEFT_ROWS_HTML}}</div>
+    <div class="calcol">{{RIGHT_ROWS_HTML}}</div>
+  </div>
+  <div class="footer">
+    <div class="brand">hooni<span>.speed</span></div>
+    <div class="note">{{NOTE_LINE}}</div>
+  </div>
+</div>

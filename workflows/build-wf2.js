@@ -22,6 +22,7 @@ const TEMPLATES = {
   'issue-blocks': T('issue-blocks.html'),
   dotd: T('dotd.html'),
   'story-podium': T('story-podium-full.html'),
+  calendar: T('calendar.html'),
 };
 
 const PREPARE = [
@@ -164,6 +165,12 @@ const PREPARE = [
   "      // 구간 라벨은 실제 순위에서 뽑는다 — 엔트리 수가 시즌마다 다르다(2026년 22명).",
   "      const range = (arr) => { const p = (arr || []).map((x) => parseInt(x.pos)).filter((n) => !isNaN(n)); return p.length ? 'P' + Math.min(...p) + '–P' + Math.max(...p) : ''; };",
   "      return fillCard(TPL['quali-elims'], { ...common, TITLE: '퀄리파잉 탈락 구간', SUBTITLE: esc(raceName), Q2_LABEL: 'Q2 탈락 ' + range(d.elimQ2), Q1_LABEL: 'Q1 탈락 ' + range(d.elimQ1), Q2_ROWS_HTML: (d.elimQ2 || []).map(g).join(''), Q1_ROWS_HTML: (d.elimQ1 || []).map(g).join('') });",
+  "    }",
+  "    case 'calendar': {",
+  "      // 시즌 캘린더: 열린 라운드는 우승자(성)+팀 색, 안 열린 라운드는 날짜를 흐리게. 이번 라운드 강조.",
+  "      const g = (r) => '<div class=\"cal-row' + (r.round === round ? ' now' : '') + (r.winner ? ' ' + teamClass(r.team) : ' todo') + '\"><div class=\"cal-rnd\">R' + r.round + '</div><div class=\"cal-bar\"></div><div class=\"cal-gp\">' + esc(r.name) + '</div><div class=\"cal-win\">' + esc(r.winner || r.dateLabel || '') + '</div></div>';",
+  "      const rs = d.rounds || []; const half = Math.ceil(rs.length / 2);",
+  "      return fillCard(TPL.calendar, { ...common, TITLE: esc(d.title || '시즌 캘린더'), SUBTITLE: esc(d.subtitle || season + ' 시즌 · 라운드별 우승자'), LEFT_ROWS_HTML: rs.slice(0, half).map(g).join(''), RIGHT_ROWS_HTML: rs.slice(half).map(g).join(''), NOTE: '그랑프리 우승자 기준' });",
   "    }",
   "    case 'timetable': {",
   "      const hl = new Set(['퀄리파잉', '레이스', '스프린트']);",

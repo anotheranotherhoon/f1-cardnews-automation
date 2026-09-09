@@ -638,6 +638,8 @@ c('SS Pick Photo', 'SS Cards');
 
 // ---------- 브랜치 7: 월 레이스 총정리 ----------
 http('RC Results', "=https://api.jolpi.ca/ergast/f1/{{ $json.season }}/{{ $json.round }}/results.json?limit=40", [-80, 520]);
+// 시즌 전 라운드 우승자를 한 번에 받는다 (카드 8 시즌 캘린더). 캘린더 자체는 'Jolpica Calendar' 를 참조한다.
+http('RC Winners', "=https://api.jolpi.ca/ergast/f1/{{ $('Resolve Day Type').first().json.season }}/results/1.json?limit=30", [-80, 400]);
 http('RC DrvNow', "=https://api.jolpi.ca/ergast/f1/{{ $('Resolve Day Type').first().json.season }}/{{ $('Resolve Day Type').first().json.round }}/driverstandings.json?limit=40", [140, 520]);
 http('RC DrvPrev', "=https://api.jolpi.ca/ergast/f1/{{ $('Resolve Day Type').first().json.season }}/{{ Math.max(1, $('Resolve Day Type').first().json.prevRound) }}/driverstandings.json?limit=40", [360, 520]);
 http('RC ConNow', "=https://api.jolpi.ca/ergast/f1/{{ $('Resolve Day Type').first().json.season }}/{{ $('Resolve Day Type').first().json.round }}/constructorstandings.json?limit=20", [580, 520]);
@@ -740,6 +742,9 @@ code(
     "// Jolpica status: 'Finished' | 'Lapped' | '+N Lap' 은 완주. 그 외(Retired/Accident/Engine…)만 RET.",
     "const finished = (st) => /^(Finished|Lapped)$/.test(String(st || '')) || /^\\+\\d+ Lap/.test(String(st || ''));",
     "const metricOf = (r) => (finished(r.status) ? (r.points ? r.points + 'pt' : '—') : 'RET');",
+    "// 시즌 캘린더 + 라운드별 우승자. 열린 라운드는 우승자 성, 안 열린 라운드는 레이스 날짜.",
+    "const winners = {}; for (const w of ($('RC Winners').first().json.MRData.RaceTable.Races || [])) { const r0 = (w.Results || [])[0]; if (r0) winners[parseInt(w.round)] = { winner: r0.Driver.familyName, team: r0.Constructor.name }; }",
+    "const calRounds = ($('Jolpica Calendar').first().json.MRData.RaceTable.Races || []).map((r) => { const rd = parseInt(r.round); const dt = new Date(r.date); return { round: rd, name: r.raceName.replace(/ Grand Prix/, ''), dateLabel: (dt.getUTCMonth() + 1) + '월 ' + dt.getUTCDate() + '일', ...(winners[rd] || {}) }; });",
     "const cards = [",
     "  { type: 'cover', template: 'cover-recap', needsLlm: ['memeConcept', 'bgImage'], data: { title: meta.raceName, subtitle: rs.headline || ('총정리 · 우승 ' + rows[0].name) } },",
     "  { type: 'race-result', template: 'result-full', data: { title: '레이스 결과', subtitle: meta.raceName, rows: rows.map((r) => ({ pos: r.pos, code: r.code, name: r.name, team: r.team, metric: metricOf(r), out: metricOf(r) === 'RET' })) } },",
@@ -748,6 +753,7 @@ code(
     "  { type: 'stints', template: 'stints', data: { title: '타이어 전략', scope: '상위 ' + stintRows.length + '명', rows: stintRows } },",
     "  { type: 'standings-drivers', template: 'result-full', data: { title: '드라이버 순위', subtitle: '등락은 직전 라운드 대비', rows: dRows.map((r) => ({ pos: r.pos, name: r.name, team: r.team, metric: r.points + 'pt', delta: r.delta })), note: '챔피언십 스탠딩' } },",
     "  { type: 'standings-constructors', template: 'result-full', data: { title: '컨스트럭터 순위', subtitle: '등락은 직전 라운드 대비', note: '챔피언십 스탠딩', shortenNames: false, singleColumn: true, rows: cRows.map((r) => ({ pos: r.pos, name: r.name, team: r.name, metric: r.points + 'pt', delta: r.delta })) } },",
+    "  { type: 'calendar', template: 'calendar', data: { rounds: calRounds } },",
     "];",
     "if (cards.length > 10) throw new Error('카드 10장 초과: ' + cards.length);",
     "return [{ json: { dayType: meta.dayType, season: meta.season, round: meta.round, raceName: meta.raceName, circuitId: meta.circuitId, dateKst: meta.dateKst, cards } }];",
@@ -755,7 +761,8 @@ code(
   [2340, 520]
 );
 c('Recipe Switch', 'RC Results', 6);
-c('RC Results', 'RC DrvNow');
+c('RC Results', 'RC Winners');
+c('RC Winners', 'RC DrvNow');
 c('RC DrvNow', 'RC DrvPrev');
 c('RC DrvPrev', 'RC ConNow');
 c('RC ConNow', 'RC ConPrev');
