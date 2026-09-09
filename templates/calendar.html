@@ -2,7 +2,7 @@
      {{CSS}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{LEFT_ROWS_HTML}} {{RIGHT_ROWS_HTML}} {{NOTE}} {{DATE}}
      행: <div class="cal-row now t-mercedes">
            <div class="cal-flag"><img src="data:image/png;base64,..."></div>
-           <div class="cal-main"><div class="cal-gp">Italian</div><div class="cal-date"><span class="cal-rnd">R13</span>9월 6일</div></div>
+           <div class="cal-main"><div class="cal-gp">Italian</div><div class="cal-date"><span class="cal-rnd">R13</span>9월 6일</div>[<div class="cal-venue">말레이시아 개최</div>]</div>
            <div class="cal-bar"></div><div class="cal-win">Kimi Antonelli</div>
          </div>
      세 열(국기 · 그랑프리 정보 · 우승자)의 폭은 모든 행에서 같다. 국기는 고정 슬롯(84×56) 안에
@@ -20,9 +20,11 @@
 .cal-flag { flex: none; width: 84px; height: 56px; display: flex; align-items: center; justify-content: center; }
 .cal-flag img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
 .cal-main { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-.cal-gp { font-size: 22px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-gp { font-size: 22px; line-height: 1.15; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cal-rnd { font-weight: 900; font-style: italic; color: #b9b9c6; margin-right: 7px; }
-.cal-date { font-size: 17px; color: #9a9aa8; font-variant-numeric: tabular-nums; }
+.cal-date { font-size: 17px; line-height: 1.15; color: #9a9aa8; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* 이름의 나라와 개최국이 다를 때만 붙는 셋째 줄 (예: Bahrain · 말레이시아 개최) */
+.cal-venue { font-size: 15px; line-height: 1.15; color: #9a9aa8; white-space: nowrap; }
 .cal-bar { width: 6px; height: 40px; border-radius: 4px; background: var(--team, transparent); flex: none; }
 .cal-win { flex: none; width: 160px; font-size: 21px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 </style>
