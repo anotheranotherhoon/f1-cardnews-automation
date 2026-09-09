@@ -1,23 +1,31 @@
 <!-- calendar: 시즌 캘린더 · 라운드별 우승자 (2열 × 최대 12행) — 월 총정리 마지막 카드
      {{CSS}} {{KICKER}} {{TITLE}} {{SUBTITLE}} {{LEFT_ROWS_HTML}} {{RIGHT_ROWS_HTML}} {{NOTE}} {{DATE}}
-     행: <div class="cal-row now t-mercedes"><div class="cal-rnd">R13</div><div class="cal-bar"></div>
-         <div class="cal-gp">Italian</div><div class="cal-win">Antonelli</div></div>
-     미개최 라운드는 .todo 로 흐리게, 우승자 자리에 날짜 -->
+     행: <div class="cal-row now t-mercedes">
+           <div class="cal-flag"><img src="data:image/png;base64,..."></div><div class="cal-slant"></div>
+           <div class="cal-main"><div class="cal-gp">Italian</div><div class="cal-date"><span class="cal-rnd">R13</span>9월 6일</div></div>
+           <div class="cal-bar"></div><div class="cal-win">Kimi Antonelli</div>
+         </div>
+     국기는 크롭·왜곡·클리핑 없이 원본 비율 그대로(height 고정, width auto) 온전히 보여준다 — 1원칙.
+     대각선은 국기 오른쪽에 별도 선(.cal-slant)으로 그려 국기 픽셀을 건드리지 않는다.
+     미개최 라운드는 .todo 로 흐리게, 우승자 칸은 비운다 -->
 <meta charset="utf-8">
 <style>
 {{CSS}}
 .cal { flex: 1; display: flex; gap: 20px; margin-top: 38px; }
-.calcol { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
-.cal-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.055);
-           border-radius: 12px; padding: 13px 16px; }
+.calcol { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.cal-row { display: flex; align-items: stretch; height: 68px; background: rgba(255,255,255,0.055);
+           border-radius: 12px; overflow: hidden; }
 .cal-row.now { background: rgba(225,6,0,0.22); outline: 2px solid rgba(225,6,0,0.55); }
 .cal-row.todo { opacity: 0.5; }
-.cal-rnd { width: 58px; font-size: 24px; font-weight: 900; font-style: italic; color: #b9b9c6; }
-.cal-bar { width: 7px; height: 40px; border-radius: 4px; background: var(--team, #3a3a48); flex: none; }
-.cal-gp { flex: 1; min-width: 0; font-size: 26px; font-weight: 700;
-          white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cal-win { font-size: 25px; font-weight: 700; color: #e8e8ef; white-space: nowrap; }
-.cal-row.todo .cal-win { color: #9a9aa8; font-weight: 500; font-variant-numeric: tabular-nums; }
+.cal-flag { flex: none; height: 100%; }
+.cal-flag img { display: block; height: 100%; width: auto; }
+.cal-slant { flex: none; width: 3px; margin: 0 10px 0 10px; background: rgba(255,255,255,0.28); transform: skewX(-16deg); }
+.cal-main { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 10px 0 6px; }
+.cal-gp { font-size: 23px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-rnd { font-weight: 900; font-style: italic; color: #b9b9c6; margin-right: 7px; }
+.cal-date { font-size: 17px; color: #9a9aa8; font-variant-numeric: tabular-nums; }
+.cal-bar { width: 6px; margin: 14px 0; border-radius: 4px; background: var(--team, transparent); flex: none; }
+.cal-win { flex: none; display: flex; align-items: center; padding: 0 14px 0 12px; font-size: 22px; font-weight: 700; white-space: nowrap; }
 </style>
 <div class="bg-dim"></div>
 <div class="frame">
