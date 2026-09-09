@@ -402,17 +402,19 @@ c('PV LastYear Results', 'PV Extract');
 c('PV LastYear Sprint', 'PV Cards');
 
 // ---------- 브랜치 2: 금 관전가이드 ----------
-http('GD Standings', "=https://api.jolpi.ca/ergast/f1/{{ $json.season }}/driverstandings.json", [-80, -480]);
+// 라인업은 시즌 스탠딩이 아니라 직전 라운드 실제 출전 기록으로 만든다. 스탠딩은 시즌 중 시트를
+// 잃은 드라이버(부상·교체)를 그대로 품고 있어서 2026 R13 에 레드불이 3명으로 나갔다.
+// 개막전(직전 라운드 없음)은 전 시즌 마지막 레이스를 쓴다.
+http('GD LastRace', "=https://api.jolpi.ca/ergast/f1/{{ $json.prevRound >= 1 ? $json.season + '/' + $json.prevRound : ($json.season - 1) + '/last' }}/results.json?limit=40", [-80, -480]);
 code(
   'GD Cards',
   [
     "const meta = $('Resolve Day Type').first().json;",
-    "const sl = $input.first().json.MRData.StandingsTable.StandingsLists || [];",
-    "if (!sl.length) throw new Error('드라이버 스탠딩 데이터 없음 (시즌 개막 전이면 정상)');",
+    "const races = $input.first().json.MRData.RaceTable.Races || [];",
+    "if (!races.length || !races[0].Results) throw new Error('직전 라운드 레이스 결과 없음');",
     "const lineup = {};",
-    "for (const d of sl[0].DriverStandings) {",
-    "  const team = d.Constructors.length ? d.Constructors[d.Constructors.length - 1].name : '?';",
-    "  (lineup[team] = lineup[team] || []).push({ name: d.Driver.givenName + ' ' + d.Driver.familyName, code: d.Driver.code, number: d.Driver.permanentNumber });",
+    "for (const r of races[0].Results) {",
+    "  (lineup[r.Constructor.name] = lineup[r.Constructor.name] || []).push({ name: r.Driver.givenName + ' ' + r.Driver.familyName, code: r.Driver.code, number: r.Driver.permanentNumber });",
     "}",
     "const KOR = { FP1: 'FP1', FP2: 'FP2', FP3: 'FP3', SQ: '스프린트 퀄리파잉', SPRINT: '스프린트', QUALI: '퀄리파잉', RACE: '레이스' };",
     "const timetable = meta.sessions.map((s) => ({ session: KOR[s.code] || s.code, startKst: s.startKst }));",
@@ -425,8 +427,8 @@ code(
   ].join('\n'),
   [140, -480]
 );
-c('Recipe Switch', 'GD Standings', 1);
-c('GD Standings', 'GD Cards');
+c('Recipe Switch', 'GD LastRace', 1);
+c('GD LastRace', 'GD Cards');
 
 // ---------- 브랜치 3+5 공용: OpenF1 세션 결과 (토 비스프린트 / 토 스프린트) ----------
 http('OF Meetings', "=https://api.openf1.org/v1/meetings?year={{ $json.season }}", [-80, -240]);
