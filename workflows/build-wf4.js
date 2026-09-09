@@ -1,7 +1,9 @@
 // WF-4 publisher 생성기: node build-wf4.js > wf4-publisher.json
 // 입력(Execute Workflow): {urls: [...], caption, dirName}
-// 기존 carousel_feed.json의 발행 구간 이관 — 토큰은 httpQueryAuth 자격증명(config.js 의 IG_CRED) 참조
-const { IG_USER_ID, TG_CHAT_ID, TG_CRED, IG_CRED, N8N_WEBHOOK_BASE, REPUBLISH_PATH, REPUBLISH_KEY } = require('./config');
+// 기존 carousel_feed.json의 발행 구간 이관.
+// 토큰은 n8n Credentials 가 아니라 /data/hooni_speed/ig-token.json 에서 읽는다 — WF-8 이 매일 갱신해
+// 덮어쓰는 파일이라 Credentials 로는 따라갈 수 없다 (2026-08-30 토큰 만료로 발행 실패한 뒤 변경).
+const { IG_USER_ID, TG_CHAT_ID, TG_CRED, N8N_WEBHOOK_BASE, REPUBLISH_PATH, REPUBLISH_KEY } = require('./config');
 
 // 발행 완료 알림의 "다시 만들기" 버튼이 호출하는 WF-1 재요청 웹훅
 const REPUBLISH_URL = N8N_WEBHOOK_BASE + 'webhook/' + REPUBLISH_PATH + '?k=' + REPUBLISH_KEY;
@@ -22,11 +24,25 @@ function c(from, to, outIdx) {
   main[idx].push({ node: to, type: 'main', index: 0 });
 }
 const igAuth = {
-  authentication: 'genericCredentialType',
-  genericAuthType: 'httpQueryAuth',
+  sendQuery: true,
+  queryParameters: { parameters: [{ name: 'access_token', value: "={{ $('Load IG Token').first().json.igToken }}" }] },
 };
 
 n('When Executed by Another Workflow', 'executeWorkflowTrigger', {}, [0, 0]);
+n(
+  'Load IG Token',
+  'code',
+  {
+    jsCode: [
+      "const fs = require('fs');",
+      "const t = JSON.parse(fs.readFileSync('/data/hooni_speed/ig-token.json', 'utf8'));",
+      "if (!t.token) throw new Error('ig-token.json 에 토큰 없음');",
+      'return $input.all().map((i) => ({ json: { ...i.json, igToken: t.token } }));',
+    ].join('\n'),
+  },
+  [110, 200],
+  2
+);
 n('Split URLs', 'splitOut', { fieldToSplitOut: 'urls', options: {} }, [220, 0]);
 n(
   'Create Item Container',
@@ -42,7 +58,7 @@ n(
   },
   [440, 0],
   4.2,
-  { retryOnFail: true, maxTries: 3, waitBetweenTries: 5000, credentials: { httpQueryAuth: IG_CRED } }
+  { retryOnFail: true, maxTries: 3, waitBetweenTries: 5000 }
 );
 n(
   'Collect Children',
@@ -66,7 +82,7 @@ n(
   },
   [1100, 0],
   4.2,
-  { retryOnFail: true, maxTries: 3, waitBetweenTries: 5000, credentials: { httpQueryAuth: IG_CRED } }
+  { retryOnFail: true, maxTries: 3, waitBetweenTries: 5000 }
 );
 n('Wait Carousel', 'wait', { amount: 20 }, [1320, 0], 1.1, { webhookId: 'f1000002-wait-carousel-00-000000000000' });
 n(
@@ -83,7 +99,7 @@ n(
   },
   [1540, 0],
   4.2,
-  { retryOnFail: true, maxTries: 3, waitBetweenTries: 10000, credentials: { httpQueryAuth: IG_CRED }, onError: 'continueErrorOutput' }
+  { retryOnFail: true, maxTries: 3, waitBetweenTries: 10000, onError: 'continueErrorOutput' }
 );
 n(
   'IF Has Story',
@@ -113,7 +129,7 @@ n(
   },
   [1980, -340],
   4.2,
-  { retryOnFail: true, maxTries: 3, waitBetweenTries: 5000, credentials: { httpQueryAuth: IG_CRED } }
+  { retryOnFail: true, maxTries: 3, waitBetweenTries: 5000 }
 );
 n('Wait Story', 'wait', { amount: 15 }, [2200, -340], 1.1, { webhookId: 'f1000005-wait-story-00-000000000000' });
 n(
@@ -130,7 +146,7 @@ n(
   },
   [2420, -340],
   4.2,
-  { retryOnFail: true, maxTries: 2, waitBetweenTries: 10000, credentials: { httpQueryAuth: IG_CRED }, onError: 'continueRegularOutput' }
+  { retryOnFail: true, maxTries: 2, waitBetweenTries: 10000, onError: 'continueRegularOutput' }
 );
 n(
   'Cleanup Cards',
@@ -202,7 +218,8 @@ n(
   { credentials: { telegramApi: TG_CRED }, webhookId: 'f1000004-notify-fail-0000-000000000000' }
 );
 
-c('When Executed by Another Workflow', 'Split URLs');
+c('When Executed by Another Workflow', 'Load IG Token');
+c('Load IG Token', 'Split URLs');
 c('Split URLs', 'Create Item Container');
 c('Create Item Container', 'Collect Children');
 c('Collect Children', 'Wait Items');

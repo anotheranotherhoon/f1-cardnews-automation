@@ -14,6 +14,7 @@ workflows/wf4-publisher.json
 workflows/wf5-asset-gen.json
 workflows/wf6-meme-story.json
 workflows/wf7-telegram-listener.json
+workflows/wf8-ig-token-refresh.json
 workflows/wf-err-alert.json
 
 # 개인 문서 (공개 저장소에 올리지 않는다)
