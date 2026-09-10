@@ -368,7 +368,7 @@ researchChain({
   next: 'PV LastYear Sprint',
   pos: [360, -840],
   promptExpr:
-    "'F1 ' + $('PV Extract').first().json.season + ' ' + $('PV Extract').first().json.raceName + ' 프리뷰 자료 조사. 웹검색으로 확인해서 순수 JSON만 출력 (코드펜스 금지): {\"tiresLastYear\": \"작년 이 GP의 피렐리 타이어 컴파운드 배정 (예: C2/C3/C4)\", \"tiresThisYear\": \"올해 이 GP 배정 (미발표면 null)\", \"issues\": [{\"head\": \"이슈 제목 한국어 12자 이내\", \"body\": \"그 이슈만 다룬 한국어 설명 1~2문장, 60자 이내\"}]} issues는 이 GP와 관련된 서로 다른 주제로 2~3개 — 한 항목에 여러 주제를 섞지 말 것. 반드시 최상위는 위 키들을 가진 JSON 객체여야 한다 — 응답 전체를 null로 출력하지 말 것. 정보를 못 찾은 개별 필드만 null로 두고, issues를 못 찾으면 빈 배열 []로 둘 것.'",
+    "'F1 ' + $('PV Extract').first().json.season + ' ' + $('PV Extract').first().json.raceName + ' 프리뷰 자료 조사.' + ($('PV Extract').first().json.lastYear ? '' : ' 이 GP는 올해 처음 쓰는 서킷에서 열린다 — 작년에 같은 이름의 GP가 다른 서킷에서 열렸어도 그 데이터를 쓰지 말고 tiresLastYear 는 반드시 null.') + ' 웹검색으로 확인해서 순수 JSON만 출력 (코드펜스 금지): {\"tiresLastYear\": \"작년 같은 서킷에서 열린 GP의 피렐리 타이어 컴파운드 배정 (예: C2/C3/C4)\", \"tiresThisYear\": \"올해 이 GP 배정 (미발표면 null)\", \"issues\": [{\"head\": \"이슈 제목 한국어 12자 이내\", \"body\": \"그 이슈만 다룬 한국어 설명 1~2문장, 60자 이내\"}]} issues는 이 GP와 관련된 서로 다른 주제로 2~3개 — 한 항목에 여러 주제를 섞지 말 것. 반드시 최상위는 위 키들을 가진 JSON 객체여야 한다 — 응답 전체를 null로 출력하지 말 것. 정보를 못 찾은 개별 필드만 null로 두고, issues를 못 찾으면 빈 배열 []로 둘 것.'",
   returnLine: "return [{ json: { ...$('PV Extract').first().json, research } }];",
 });
 http('PV LastYear Sprint', "=https://api.jolpi.ca/ergast/f1/{{ $json.lastYear ? $json.lastYear.season : '1950' }}/{{ $json.lastYear ? $json.lastYear.round : '1' }}/sprint.json", [470, -720]);
@@ -385,7 +385,8 @@ code(
     "const cards = [",
     "  { type: 'cover', template: 'cover-preview', needsLlm: ['memeConcept', 'bgImage'], data: { title: meta.raceName, raceStartKst: raceS ? raceS.startKst : null, isSprint: meta.isSprint } },",
     "  { type: 'track', template: 'track', data: { circuitId: meta.circuitId, circuitName: meta.circuitName, ...(track || {}) } },",
-    "  { type: 'tires', template: 'tires', needsLlm: ['compounds'], data: { raceName: meta.raceName, body: (rs.tiresLastYear ? '작년: ' + rs.tiresLastYear : '') + (rs.tiresThisYear ? '\\n올해: ' + rs.tiresThisYear : (rs.tiresLastYear ? '\\n올해: 발표 대기' : '')) || null } },",
+    "  // 신설 서킷(작년 이 서킷 레이스 없음)엔 작년 컴파운드가 존재하지 않는다. 2026 마드리드에서 LLM 이 GP 이름만 같은 바르셀로나 값을 가져왔다.",
+    "  { type: 'tires', template: 'tires', needsLlm: ['compounds'], data: { raceName: meta.raceName, body: (() => { const last = meta.lastYear ? rs.tiresLastYear : null; return ((last ? '작년: ' + last : '') + (rs.tiresThisYear ? '\\n올해: ' + rs.tiresThisYear : (last ? '\\n올해: 발표 대기' : ''))).trim() || null; })() } },",
     "  // 주제가 여러 개면 한 문단에 몰지 않는다 — issue-blocks 가 주제별 블록으로 나눠 렌더한다.",
     "  { type: 'issue', template: 'issue-blocks', needsLlm: ['issues'], data: { lastYear: meta.lastYear, session: meta.lastYear ? meta.lastYear.season + ' ' + meta.raceName : meta.raceName, issues: rs.issues || [] } },",
     "  meta.lastYear ? { type: 'podium', template: 'podium', data: { season: meta.lastYear.season, raceName: meta.lastYear.raceName, podium: meta.lastYear.podium } } : null,",
